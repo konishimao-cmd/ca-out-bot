@@ -1,0 +1,1034 @@
+<!doctype html>
+<html lang="ja">
+<head><meta name="robots" content="noindex,nofollow">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>属性別CAアウト対策BOT</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<style id="appstyle">
+:root{
+  --bg:#f5f6f8; --panel:#ffffff; --ink:#1d2330; --muted:#6b7385; --line:#e3e6ec; --soft:#f0f2f6;
+  --accent:#1f3a5f;
+  --c1:#2f6fd6; --c1s:#e8f0fd;
+  --c2:#d0457a; --c2s:#fdebf2;
+  --c3:#c27a0e; --c3s:#fdf3e2;
+  --c4:#1f8a5b; --c4s:#e5f5ed;
+  --pre:#5b4bc4; --pres:#efedfb;
+  --ret:#d2552e; --rets:#fdeee8;
+  --hl:#fff2a8;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --bg:#14171d; --panel:#1c2028; --ink:#e7e9ee; --muted:#9aa2b2; --line:#2d333e; --soft:#232833;
+    --accent:#1f2a3d;
+    --c1:#7aa7f5; --c1s:#1e2b44;
+    --c2:#f07ea8; --c2s:#3a2030;
+    --c3:#f0b04e; --c3s:#3a2d17;
+    --c4:#5bcf97; --c4s:#173328;
+    --pre:#a99cf5; --pres:#2a2645;
+    --ret:#f38d6b; --rets:#3d2419;
+    --hl:#5a4f12;
+  }
+}
+:root[data-theme="dark"]{
+    color-scheme:dark;
+    --bg:#14171d; --panel:#1c2028; --ink:#e7e9ee; --muted:#9aa2b2; --line:#2d333e; --soft:#232833;
+    --accent:#1f2a3d;
+    --c1:#7aa7f5; --c1s:#1e2b44;
+    --c2:#f07ea8; --c2s:#3a2030;
+    --c3:#f0b04e; --c3s:#3a2d17;
+    --c4:#5bcf97; --c4s:#173328;
+    --pre:#a99cf5; --pres:#2a2645;
+    --ret:#f38d6b; --rets:#3d2419;
+    --hl:#5a4f12;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Hiragino Kaku Gothic ProN","Yu Gothic UI","Meiryo",system-ui,sans-serif;font-size:15px;line-height:1.7}
+header{background:var(--accent);color:#fff;padding-block:14px;padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px));display:flex;align-items:baseline;gap:8px 16px;flex-wrap:wrap}
+header h1{margin:0;font-size:20px;letter-spacing:.04em}
+header .meta{font-size:12px;opacity:.8}
+nav.tabs{display:flex;gap:4px;margin-left:auto}
+nav.tabs button{background:transparent;border:1px solid rgba(255,255,255,.4);color:#fff;padding:6px 14px;border-radius:999px;cursor:pointer;font:inherit;font-size:13px}
+nav.tabs button.on{background:#fff;color:#1f3a5f}
+.mini-link{background:none;border:0;padding:0;margin-left:10px;color:inherit;font:inherit;font-size:12px;text-decoration:underline;text-underline-offset:2px;cursor:pointer}
+.mini-link:hover,.mini-link.on{opacity:1;font-weight:700}
+main{max-width:1200px;margin:0 auto;padding-block:20px 80px;padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px))}
+.result>div{min-width:0}
+@media (max-width:560px){.filter{margin-left:0}.badges{flex-wrap:wrap}}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin-bottom:16px}
+.sel-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+@media (max-width:900px){.sel-grid{grid-template-columns:1fr 1fr}}
+@media (max-width:560px){.sel-grid{grid-template-columns:1fr}}
+.axis h3{margin:0 0 8px;font-size:14px;display:flex;align-items:center;gap:6px}
+.num{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;color:#fff;font-size:13px;font-weight:700;flex:none}
+.k1 .num,.num.k1{background:var(--c1)} .k2 .num,.num.k2{background:var(--c2)} .k3 .num,.num.k3{background:var(--c3)} .k4 .num,.num.k4{background:var(--c4)}
+.opts{display:flex;flex-direction:column;gap:6px}
+.opt{text-align:left;border:1.5px solid var(--line);background:var(--panel);color:var(--ink);border-radius:8px;padding:8px 10px;cursor:pointer;font:inherit;font-size:13.5px;line-height:1.4}
+.opt:hover{border-color:var(--muted)}
+.k1 .opt.on{border-color:var(--c1);background:var(--c1s);font-weight:700}
+.k2 .opt.on{border-color:var(--c2);background:var(--c2s);font-weight:700}
+.k3 .opt.on{border-color:var(--c3);background:var(--c3s);font-weight:700}
+.k4 .opt.on{border-color:var(--c4);background:var(--c4s);font-weight:700}
+.opt .tag{font-size:11px;color:var(--muted);font-weight:400;margin-left:4px}
+.result{display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+.result .pno{font-size:13px;color:var(--muted)}
+.result .pno b{font-size:26px;color:var(--ink);margin-left:4px}
+.result .lbl{font-size:13px;color:var(--muted)}
+.badges{display:flex;gap:6px}
+.badge{display:inline-flex;align-items:center;gap:6px;padding:4px 12px 4px 4px;border-radius:999px;font-size:13px;font-weight:700}
+.badge.k1{background:var(--c1s);color:var(--c1)} .badge.k2{background:var(--c2s);color:var(--c2)}
+.badge.k3{background:var(--c3s);color:var(--c3)} .badge.k4{background:var(--c4s);color:var(--c4)}
+.badge.none{background:var(--soft);color:var(--muted);padding:4px 12px}
+.filter{margin-left:auto;display:flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.filter button{border:0;background:var(--panel);color:var(--muted);padding:6px 12px;cursor:pointer;font:inherit;font-size:13px}
+.filter button+button{border-left:1px solid var(--line)}
+.filter button.on{background:var(--ink);color:var(--panel)}
+.outs{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px;padding-top:12px;border-top:1px dashed var(--line)}
+.outs .lbl{font-size:12px;color:var(--muted);width:100%}
+.chip{border:1px solid var(--line);background:var(--soft);color:var(--ink);border-radius:999px;padding:3px 10px;font-size:12.5px;cursor:pointer;font-family:inherit}
+.chip:hover{border-color:var(--muted)}
+.chip .dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px;vertical-align:middle}
+.chip.empty{opacity:.55}
+.chip.pre{background:var(--pres);border-color:transparent;color:var(--pre)}
+.chiprow+.chiprow .lbl{margin-top:6px}
+section.cat{margin-bottom:22px}
+section.cat>h2{display:flex;align-items:center;gap:8px;font-size:17px;margin:0 0 10px;padding:8px 12px;border-radius:10px}
+section.cat.k1>h2{background:var(--c1s)} section.cat.k2>h2{background:var(--c2s)}
+section.cat.k3>h2{background:var(--c3s)} section.cat.k4>h2{background:var(--c4s)}
+section.cat>h2 small{font-weight:400;color:var(--muted);font-size:13px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;margin-bottom:10px;overflow:hidden;scroll-margin-top:12px}
+.card.flash{box-shadow:0 0 0 3px var(--hl)}
+.card>summary{list-style:none;cursor:pointer;padding:11px 14px;display:flex;align-items:center;gap:10px;font-weight:700}
+.card>summary::-webkit-details-marker{display:none}
+.card>summary::after{content:"▾";margin-left:auto;color:var(--muted);transition:transform .15s}
+.card:not([open])>summary::after{transform:rotate(-90deg)}
+.kind{font-size:11px;font-weight:700;padding:2px 8px;border-radius:6px;flex:none}
+.kind.pre{background:var(--pres);color:var(--pre)}
+.kind.out{background:var(--rets);color:var(--ret)}
+.mis{font-size:11px;color:var(--muted);font-weight:400}
+.body{display:grid;grid-template-columns:1fr 1fr;gap:0;border-top:1px solid var(--line)}
+.body.single{grid-template-columns:1fr}
+@media (max-width:760px){.body{grid-template-columns:1fr}}
+.talk{padding:12px 14px;position:relative;min-width:0}
+.body>.talk+.talk{border-left:1px solid var(--line)}
+@media (max-width:760px){.body>.talk+.talk{border-left:0;border-top:1px solid var(--line)}}
+.talk h4{margin:0 0 6px;font-size:12px;display:flex;align-items:center;gap:6px}
+.talk.pre h4{color:var(--pre)} .talk.ret h4{color:var(--ret)}
+.talk h4 .when{font-weight:400;color:var(--muted)}
+.talk h4{padding-right:56px;flex-wrap:wrap}
+.talk-ic{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:6px;color:#fff;font-size:11px}
+.talk.pre .talk-ic{background:var(--pre)} .talk.ret .talk-ic{background:var(--ret)}
+.rt{font-weight:400;color:var(--muted);font-size:11px;border:1px solid var(--line);border-radius:999px;padding:0 7px}
+.talk .txt{display:flex;flex-direction:column;gap:10px;word-break:break-word;font-size:14.5px;line-height:1.85}
+/* セリフ吹き出し */
+.say{position:relative;padding:10px 14px;border-radius:4px 14px 14px 14px;background:var(--soft)}
+.talk.pre .say{background:var(--pres)} .talk.ret .say{background:var(--rets)}
+.say.cont{margin-top:-5px;border-radius:14px}
+.say{width:fit-content;max-width:100%}
+.say.analogy{background:var(--panel)!important;border:1.5px dashed var(--c3);padding-top:16px;margin-top:6px}
+.say-tag{position:absolute;top:-10px;left:10px;background:var(--c3);color:#fff;font-size:10.5px;font-weight:700;padding:1px 8px;border-radius:999px;letter-spacing:.05em}
+.ask{text-decoration:underline dotted var(--ret);text-decoration-thickness:2px;text-underline-offset:4px}
+.ask::after{content:"問いかけ";display:inline-block;margin-left:6px;font-size:10px;font-weight:700;color:var(--ret);border:1px solid currentColor;border-radius:4px;padding:0 4px;line-height:1.5;vertical-align:2px}
+.em{background:linear-gradient(transparent 55%, var(--hl) 55%);color:inherit;font-weight:700;padding:0 1px}
+.key{font-weight:700;color:var(--c3);border-bottom:2px solid var(--c3s);padding:0 1px}
+.you{background:var(--hl);border-radius:3px;padding:0 3px;font-weight:700}
+/* 反応を見る・補足 */
+.act{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted);padding:2px 0}
+.act::before,.act::after{content:"";flex:1;border-top:1px dashed var(--line)}
+.act-tag{order:-1;flex:none;font-size:10.5px;font-weight:700;color:var(--panel);background:var(--muted);border-radius:4px;padding:1px 6px}
+.act::before{order:-2;flex:0 0 12px}
+.note{font-size:12.5px;color:var(--muted);background:var(--soft);border-radius:8px;padding:6px 10px 6px 30px;position:relative}
+.note::before{content:"※";position:absolute;left:10px;top:6px;font-weight:700;color:var(--c3)}
+/* 手順見出し・小見出し */
+.step{display:flex;align-items:center;gap:8px;font-weight:700;font-size:14px;margin-top:4px;padding-bottom:4px;border-bottom:1px solid var(--line)}
+.step-n{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;background:var(--ink);color:var(--panel);font-size:13px}
+.sub{font-weight:700;font-size:14px}
+/* 箇条書き */
+.pts{margin:-4px 0 0;padding:0;list-style:none;display:flex;flex-direction:column;gap:4px}
+.pts li{position:relative;padding-left:18px}
+.pts li::before{content:"";position:absolute;left:4px;top:.75em;width:7px;height:7px;border-radius:2px;background:var(--c3)}
+/* 流れ（→ / ⇒） */
+.flow{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:18px}
+.flow li{position:relative;border:1px solid var(--line);border-radius:10px;padding:7px 12px;font-size:14px;background:var(--panel)}
+.flow li+li::before{content:"↓";position:absolute;top:-19px;left:50%;transform:translateX(-50%);color:var(--muted);font-size:13px;line-height:18px}
+.flow li.end{border-color:var(--ret);background:var(--rets);font-weight:700}
+.talk.empty .txt{color:var(--muted);font-style:italic;font-size:13px}
+.copy{position:absolute;top:8px;right:10px;border:1px solid var(--line);background:var(--panel);color:var(--muted);font:inherit;font-size:11px;padding:2px 8px;border-radius:6px;cursor:pointer}
+.copy:hover{color:var(--ink)}
+.only-d .talk.pre,.only-c .talk.ret{display:none}
+.only-d .body,.only-c .body{grid-template-columns:1fr}
+.only-d .body>.talk+.talk,.only-c .body>.talk+.talk{border:0}
+.only-c .no-c,.only-d .no-d{display:none}
+.chiprow{display:contents}
+.shared{font-size:11px;font-weight:700;color:var(--muted);border:1px solid var(--line);border-radius:6px;padding:1px 6px}
+.emptybox{padding:14px;color:var(--muted);background:var(--panel);border:1px dashed var(--line);border-radius:12px;font-size:13.5px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{padding:6px 8px;border-bottom:1px solid var(--line);text-align:left;white-space:nowrap}
+th{position:sticky;top:0;background:var(--panel);color:var(--muted);font-weight:600;z-index:1}
+tbody tr{cursor:pointer}
+tbody tr:hover{background:var(--soft)}
+tbody tr.cur{background:var(--c1s)}
+.tblwrap{overflow:auto;max-height:70vh}
+.listfilter{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;align-items:center;font-size:13px}
+.listfilter select{font:inherit;font-size:13px;padding:4px 6px;border-radius:6px;border:1px solid var(--line);background:var(--panel);color:var(--ink)}
+.hidden{display:none!important}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--ink);color:var(--panel);padding:8px 16px;border-radius:999px;font-size:13px;opacity:0;transition:opacity .2s;pointer-events:none}
+.toast.show{opacity:1}
+.totop{position:fixed;right:max(16px,env(safe-area-inset-right,0px));bottom:calc(20px + env(safe-area-inset-bottom,0px));z-index:20;border:0;border-radius:999px;background:var(--accent);color:#fff;font:inherit;font-size:13px;font-weight:700;padding:10px 16px;box-shadow:0 4px 14px rgba(0,0,0,.18);cursor:pointer;opacity:0;transform:translateY(8px);transition:opacity .2s,transform .2s;pointer-events:none}
+.totop.show{opacity:1;transform:none;pointer-events:auto}
+.totop:hover{filter:brightness(1.12)}
+[hidden]{display:none!important}
+/* テスト */
+.q-set{display:grid;gap:16px}
+.q-set h2,.q-res h2{margin:0;font-size:18px}
+.q-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.q-row>.lbl{width:100%;font-size:12px;color:var(--muted);font-weight:700}
+.q-tog{border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:999px;padding:6px 12px;font:inherit;font-size:13px;cursor:pointer}
+.q-tog.on{background:var(--ink);color:var(--panel);border-color:var(--ink)}
+.q-tog small{opacity:.7;margin-left:4px}
+.q-name{font:inherit;font-size:15px;padding:8px 12px;border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--ink);width:min(320px,100%)}
+.q-go{background:var(--accent);color:#fff;border:0;border-radius:10px;padding:10px 22px;font:inherit;font-weight:700;font-size:15px;cursor:pointer}
+.q-go:disabled{opacity:.4;cursor:default}
+.q-sub{background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:10px;padding:9px 16px;font:inherit;font-size:14px;cursor:pointer}
+.q-head{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--muted)}
+.q-bar{flex:1;height:6px;background:var(--soft);border-radius:999px;overflow:hidden}
+.q-bar i{display:block;height:100%;background:var(--accent);transition:width .2s}
+.q-type{font-size:11px;font-weight:700;padding:2px 8px;border-radius:6px;background:var(--soft);color:var(--ink);flex:none}
+.q-prompt{font-size:16px;font-weight:700;line-height:1.7;margin:14px 0}
+.q-line{background:var(--soft);border-radius:10px;padding:10px 12px;line-height:1.9;margin:-4px 0 14px;font-size:14px}
+.q-blank{display:inline-block;min-width:5em;border-bottom:2px solid var(--accent);text-align:center;color:var(--accent);font-weight:700}
+.q-opts{display:grid;grid-template-columns:minmax(0,1fr);gap:8px}
+#view-quiz{overflow-wrap:anywhere;padding-bottom:env(safe-area-inset-bottom,0px)}
+.q-opt>span:last-child{min-width:0;flex:1}
+body.in-quiz .totop{display:none}
+.q-opt{text-align:left;border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:10px;padding:11px 14px;font:inherit;font-size:14px;line-height:1.6;cursor:pointer;display:flex;gap:10px;align-items:flex-start}
+.q-opt:hover:not(:disabled){border-color:var(--muted)}
+.q-opt:disabled{cursor:default}
+.q-opt .k{flex:none;width:22px;height:22px;border-radius:50%;background:var(--soft);display:grid;place-items:center;font-size:12px;font-weight:700;margin-top:1px}
+.q-opt.ok{border-color:var(--c4);background:var(--c4s)}
+.q-opt.ng{border-color:var(--ret);background:var(--rets)}
+.q-fb{margin-top:14px;padding:12px 14px;border-radius:10px;font-weight:700;line-height:1.6}
+.q-fb.ok{background:var(--c4s);color:var(--c4)}
+.q-fb.ng{background:var(--rets);color:var(--ret)}
+.q-exp{margin-top:10px}
+.q-exp>summary{cursor:pointer;font-size:13px;color:var(--muted);padding:6px 0}
+.q-exp .talk{border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+.q-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:16px;flex-wrap:wrap}
+.q-score{font-size:44px;font-weight:800;text-align:center;margin:10px 0 0}
+.q-score small{font-size:16px;color:var(--muted);font-weight:600}
+.q-note{font-size:12.5px;color:var(--muted)}
+.q-note.err{color:var(--ret)}
+.q-wrong{margin:6px 0 0;padding-left:20px;font-size:13.5px;line-height:1.8}
+.q-res{display:grid;gap:12px}
+.q-hist{font-size:13px;margin:0;padding-left:18px;color:var(--muted);line-height:1.8}
+.q-admin-head{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+.q-admin-head h2{margin:0 auto 0 0;font-size:17px}
+.q-weak{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 12px}
+#qadmin td.w{white-space:normal;min-width:220px}
+/* Excelで更新 */
+.upd-btn{background:transparent;border:1px dashed rgba(255,255,255,.6);color:#fff;padding:6px 12px;border-radius:999px;cursor:pointer;font:inherit;font-size:13px}
+.upd-btn:hover{background:rgba(255,255,255,.12)}
+.modal{position:fixed;inset:0;background:rgba(10,14,22,.55);display:flex;align-items:center;justify-content:center;padding:16px;z-index:20}
+.modal-box{background:var(--panel);color:var(--ink);border-radius:14px;width:min(520px,100%);padding:20px;display:flex;flex-direction:column;gap:14px;box-shadow:0 20px 50px rgba(0,0,0,.3)}
+.modal-box h3{margin:0;font-size:17px}
+.modal-box p{margin:0;font-size:13.5px;color:var(--muted)}
+.drop{border:2px dashed var(--line);border-radius:12px;padding:22px 14px;text-align:center;cursor:pointer;font-size:14px;background:var(--soft)}
+.drop.over{border-color:var(--c1);background:var(--c1s)}
+.drop b{color:var(--c1)}
+.upd-sum{font-size:13.5px;background:var(--soft);border-radius:10px;padding:10px 12px;line-height:1.8}
+.upd-sum.err{background:var(--rets);color:var(--ret)}
+.modal-actions{display:flex;justify-content:flex-end;gap:8px}
+.modal-actions button{font:inherit;font-size:14px;padding:8px 16px;border-radius:8px;cursor:pointer;border:1px solid var(--line);background:var(--panel);color:var(--ink)}
+.modal-actions .primary{background:var(--ink);color:var(--panel);border-color:var(--ink)}
+.modal-actions .primary:disabled{opacity:.4;cursor:default}
+button:focus-visible,.drop:focus-visible{outline:2px solid var(--c1);outline-offset:2px}
+</style>
+</head>
+<body>
+<template id="shell">
+<header>
+  <h1>属性別CAアウト対策BOT</h1>
+  <span class="meta"><span id="meta"></span><button class="mini-link" data-view="list" id="listTab">パターン一覧</button></span>
+  <nav class="tabs">
+    <button class="upd-btn" id="updBtn" hidden>Excelで更新</button>
+    <button class="on" data-view="nav">トーク表示</button>
+    <button data-view="quiz">テスト</button>
+  </nav>
+</header>
+<main>
+  <div id="view-nav">
+    <div class="panel">
+      <div class="sel-grid" id="selectors"></div>
+    </div>
+    <div class="panel">
+      <div class="result">
+        <div class="pno">パターン No.<b id="pno">-</b></div>
+        <div>
+          <div class="lbl">分類結果（懸念が出やすい項目）</div>
+          <div class="badges" id="badges"></div>
+        </div>
+        <div class="filter" id="filter">
+          <button class="on" data-f="all">すべて</button>
+          <button data-f="pre">アウト潰し（事前）</button>
+          <button data-f="ret">切り返し</button>
+        </div>
+      </div>
+      <div class="outs" id="outs"></div>
+    </div>
+    <div id="talks"></div>
+  </div>
+
+  <div id="view-list" class="hidden">
+    <div class="panel">
+      <div class="listfilter" id="listfilter"></div>
+      <div class="tblwrap"><table id="tbl"></table></div>
+    </div>
+  </div>
+
+  <div id="view-quiz" class="hidden">
+    <div class="panel" id="quiz"></div>
+    <div class="panel hidden" id="qadmin"></div>
+  </div>
+</main>
+<div class="toast" id="toast">コピーしました</div>
+<button class="totop" id="totop" aria-label="ページの先頭へ戻る">▲ TOPへ</button>
+<div class="modal" id="updModal" hidden>
+  <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="updTitle">
+    <h3 id="updTitle">Excelでトークを更新</h3>
+    <p>最新の「顧客属性別トーク」Excelを選ぶと、内容を読み込んでこのページを更新します。更新すると、このURLを開いている全員の画面に反映されます。</p>
+    <label class="drop" id="updDrop" tabindex="0">
+      <b>ここにExcelをドロップ</b><br>またはクリックしてファイルを選択（.xlsx）
+      <input type="file" id="updFile" accept=".xlsx" hidden>
+    </label>
+    <div class="upd-sum" id="updSum" hidden></div>
+    <div class="modal-actions">
+      <button id="updCancel">キャンセル</button>
+      <button class="primary" id="updGo" disabled>この内容でページを更新</button>
+    </div>
+  </div>
+</div>
+</template>
+
+<script id="data" type="application/json">{"source":"顧客属性別トーク (3).xlsx","sheets":[{"name":"概要","rows":[{"r":4,"c":{"C":"②婚姻","E":"④心配な点（問診表）","D":"③脱毛経験","B":"①職業"}},{"r":5,"c":{"C":"未婚（彼女なし）","E":"料金やプランについて","A":"Ａ","D":"なし","B":"正社員"}},{"r":6,"c":{"C":"未婚（彼女あり）","E":"痛み赤みについて・脱毛前後のケア方法について","A":"Ｂ","D":"ある（3回以下）","B":"学生バイトあり"}},{"r":7,"c":{"C":"既婚","E":"脱毛期間と方法について","A":"Ｃ","D":"ある（4～9回）","B":"自営業"}},{"r":8,"c":{"D":"ある（10回以上）","A":"D","B":"公務員"}},{"r":9,"c":{"A":"E","B":"派遣社員"}},{"r":14,"c":{"C":"②婚姻","E":"④心配な点（問診表）","D":"③脱毛経験","B":"①職業"}},{"r":15,"c":{"C":"未婚（彼女なし）","E":"料金やプランについて","A":"1.0","D":"なし","B":"正社員"}},{"r":16,"c":{"C":"未婚（彼女なし）","E":"痛み赤みについて・脱毛前後のケア方法について","A":"2","D":"なし","B":"正社員"}},{"r":17,"c":{"C":"未婚（彼女なし）","E":"脱毛期間と方法について","A":"3","D":"なし","B":"正社員"}},{"r":18,"c":{"C":"未婚（彼女なし）","E":"料金やプランについて","A":"4","D":"ある（3回以下）","B":"正社員"}},{"r":19,"c":{"C":"未婚（彼女なし）","E":"痛み赤みについて・脱毛前後のケア方法について","A":"5","D":"ある（3回以下）","B":"正社員"}},{"r":20,"c":{"C":"未婚（彼女なし）","E":"脱毛期間と方法について","A":"6","D":"ある（3回以下）","B":"正社員"}},{"r":21,"c":{"C":"未婚（彼女なし）","E":"料金やプランについて","A":"7","D":"ある（4～9回）","B":"正社員"}},{"r":22,"c":{"C":"未婚（彼女なし）","E":"痛み赤みについて・脱毛前後のケア方法について","A":"8","D":"ある（4～9回）","B":"正社員"}},{"r":23,"c":{"C":"未婚（彼女なし）","E":"脱毛期間と方法について","A":"9","D":"ある（4～9回）","B":"正社員"}},{"r":24,"c":{"C":"未婚（彼女なし）","E":"料金やプランについて","A":"10","D":"ある（10回以上）","B":"正社員"}},{"r":25,"c":{"C":"未婚（彼女なし）","E":"痛み赤みについて・脱毛前後のケア方法について","A":"11","D":"ある（10回以上）","B":"正社員"}},{"r":26,"c":{"C":"未婚（彼女なし）","E":"脱毛期間と方法について","A":"12","D":"ある（10回以上）","B":"正社員"}},{"r":27,"c":{"C":"未婚（彼女あり）","E":"料金やプランについて","A":"13","D":"なし","B":"正社員"}},{"r":28,"c":{"C":"未婚（彼女あり）","E":"痛み赤みについて・脱毛前後のケア方法について","A":"14","D":"なし","B":"正社員"}},{"r":29,"c":{"C":"未婚（彼女あり）","E":"脱毛期間と方法について","A":"15","D":"なし","B":"正社員"}},{"r":30,"c":{"C":"未婚（彼女あり）","E":"料金やプランについて","A":"16","D":"ある（3回以下）","B":"正社員"}},{"r":31,"c":{"C":"未婚（彼女あり）","E":"痛み赤みについて・脱毛前後のケア方法について","A":"17","D":"ある（3回以下）","B":"正社員"}},{"r":32,"c":{"C":"未婚（彼女あり）","E":"脱毛期間と方法について","A":"18","D":"ある（3回以下）","B":"正社員"}},{"r":33,"c":{"C":"未婚（彼女あり）","E":"料金やプランについて","A":"19","D":"ある（4～9回）","B":"正社員"}},{"r":34,"c":{"C":"未婚（彼女あり）","E":"痛み赤みについて・脱毛前後のケア方法について","A":"20","D":"ある（4～9回）","B":"正社員"}},{"r":35,"c":{"C":"未婚（彼女あり）","E":"脱毛期間と方法について","A":"21","D":"ある（4～9回）","B":"正社員"}},{"r":36,"c":{"C":"未婚（彼女あり）","E":"料金やプランについて","A":"22","D":"ある（10回以上）","B":"正社員"}},{"r":37,"c":{"C":"未婚（彼女あり）","E":"痛み赤みについて・脱毛前後のケア方法について","A":"23","D":"ある（10回以上）","B":"正社員"}},{"r":38,"c":{"C":"未婚（彼女あり）","E":"脱毛期間と方法について","A":"24","D":"ある（10回以上）","B":"正社員"}},{"r":39,"c":{"C":"既婚","E":"料金やプランについて","A":"25","D":"なし","B":"正社員"}},{"r":40,"c":{"C":"既婚","E":"痛み赤みについて・脱毛前後のケア方法について","A":"26","D":"なし","B":"正社員"}},{"r":41,"c":{"C":"既婚","E":"脱毛期間と方法について","A":"27","D":"なし","B":"正社員"}},{"r":42,"c":{"C":"既婚","E":"料金やプランについて","A":"28","D":"ある（3回以下）","B":"正社員"}},{"r":43,"c":{"C":"既婚","E":"痛み赤みについて・脱毛前後のケア方法について","A":"29","D":"ある（3回以下）","B":"正社員"}},{"r":44,"c":{"C":"既婚","E":"脱毛期間と方法について","A":"30","D":"ある（3回以下）","B":"正社員"}},{"r":45,"c":{"C":"既婚","E":"料金やプランについて","A":"31","D":"ある（4～9回）","B":"正社員"}},{"r":46,"c":{"C":"既婚","E":"痛み赤みについて・脱毛前後のケア方法について","A":"32","D":"ある（4～9回）","B":"正社員"}},{"r":47,"c":{"C":"既婚","E":"脱毛期間と方法について","A":"33","D":"ある（4～9回）","B":"正社員"}},{"r":48,"c":{"C":"既婚","E":"料金やプランについて","A":"34","D":"ある（10回以上）","B":"正社員"}},{"r":49,"c":{"C":"既婚","E":"痛み赤みについて・脱毛前後のケア方法について","A":"35","D":"ある（10回以上）","B":"正社員"}},{"r":50,"c":{"C":"既婚","E":"脱毛期間と方法について","A":"36","D":"ある（10回以上）","B":"正社員"}},{"r":51,"c":{"C":"未婚（彼女なし）","E":"料金やプランについて","A":"37","D":"なし","B":"学生バイトあり"}},{"r":52,"c":{"C":"未婚（彼女なし）","E":"痛み赤みについて・脱毛前後のケア方法について","A":"38","D":"なし","B":"学生バイトあり"}},{"r":53,"c":{"C":"未婚（彼女なし）","E":"脱毛期間と方法について","A":"39","D":"なし","B":"学生バイトあり"}},{"r":54,"c":{"C":"未婚（彼女なし）","E":"料金やプランについて","A":"40","D":"ある（3回以下）","B":"学生バイトあり"}},{"r":55,"c":{"C":"未婚（彼女なし）","E":"痛み赤みについて・脱毛前後のケア方法について","A":"41","D":"ある（3回以下）","B":"学生バイトあり"}},{"r":56,"c":{"C":"未婚（彼女なし）","E":"脱毛期間と方法について","A":"42","D":"ある（3回以下）","B":"学生バイトあり"}},{"r":57,"c":{"C":"未婚（彼女なし）","E":"料金やプランについて","A":"43","D":"ある（4～9回）","B":"学生バイトあり"}},{"r":58,"c":{"C":"未婚（彼女なし）","E":"痛み赤みについて・脱毛前後のケア方法について","A":"44","D":"ある（4～9回）","B":"学生バイトあり"}},{"r":59,"c":{"C":"未婚（彼女なし）","E":"脱毛期間と方法について","A":"45","D":"ある（4～9回）","B":"学生バイトあり"}},{"r":60,"c":{"C":"未婚（彼女なし）","E":"料金やプランについて","A":"46","D":"ある（10回以上）","B":"学生バイトあり"}},{"r":61,"c":{"C":"未婚（彼女なし）","E":"痛み赤みについて・脱毛前後のケア方法について","A":"47","D":"ある（10回以上）","B":"学生バイトあり"}},{"r":62,"c":{"C":"未婚（彼女なし）","E":"脱毛期間と方法について","A":"48","D":"ある（10回以上）","B":"学生バイトあり"}},{"r":63,"c":{"C":"未婚（彼女あり）","E":"料金やプランについて","A":"49","D":"なし","B":"学生バイトあり"}},{"r":64,"c":{"C":"未婚（彼女あり）","E":"痛み赤みについて・脱毛前後のケア方法について","A":"50","D":"なし","B":"学生バイトあり"}},{"r":65,"c":{"C":"未婚（彼女あり）","E":"脱毛期間と方法について","A":"51","D":"なし","B":"学生バイトあり"}},{"r":66,"c":{"C":"未婚（彼女あり）","E":"料金やプランについて","A":"52","D":"ある（3回以下）","B":"学生バイトあり"}},{"r":67,"c":{"C":"未婚（彼女あり）","E":"痛み赤みについて・脱毛前後のケア方法について","A":"53","D":"ある（3回以下）","B":"学生バイトあり"}},{"r":68,"c":{"C":"未婚（彼女あり）","E":"脱毛期間と方法について","A":"54","D":"ある（3回以下）","B":"学生バイトあり"}},{"r":69,"c":{"C":"未婚（彼女あり）","E":"料金やプランについて","A":"55","D":"ある（4～9回）","B":"学生バイトあり"}},{"r":70,"c":{"C":"未婚（彼女あり）","E":"痛み赤みについて・脱毛前後のケア方法について","A":"56","D":"ある（4～9回）","B":"学生バイトあり"}},{"r":71,"c":{"C":"未婚（彼女あり）","E":"脱毛期間と方法について","A":"57","D":"ある（4～9回）","B":"学生バイトあり"}},{"r":72,"c":{"C":"未婚（彼女あり）","E":"料金やプランについて","A":"58","D":"ある（10回以上）","B":"学生バイトあり"}},{"r":73,"c":{"C":"未婚（彼女あり）","E":"痛み赤みについて・脱毛前後のケア方法について","A":"59","D":"ある（10回以上）","B":"学生バイトあり"}},{"r":74,"c":{"C":"未婚（彼女あり）","E":"脱毛期間と方法について","A":"60","D":"ある（10回以上）","B":"学生バイトあり"}},{"r":75,"c":{"C":"既婚","E":"料金やプランについて","A":"61","D":"なし","B":"学生バイトあり"}},{"r":76,"c":{"C":"既婚","E":"痛み赤みについて・脱毛前後のケア方法について","A":"62","D":"なし","B":"学生バイトあり"}},{"r":77,"c":{"C":"既婚","E":"脱毛期間と方法について","A":"63","D":"なし","B":"学生バイトあり"}},{"r":78,"c":{"C":"既婚","E":"料金やプランについて","A":"64","D":"ある（3回以下）","B":"学生バイトあり"}},{"r":79,"c":{"C":"既婚","E":"痛み赤みについて・脱毛前後のケア方法について","A":"65","D":"ある（3回以下）","B":"学生バイトあり"}},{"r":80,"c":{"C":"既婚","E":"脱毛期間と方法について","A":"66","D":"ある（3回以下）","B":"学生バイトあり"}},{"r":81,"c":{"C":"既婚","E":"料金やプランについて","A":"67","D":"ある（4～9回）","B":"学生バイトあり"}},{"r":82,"c":{"C":"既婚","E":"痛み赤みについて・脱毛前後のケア方法について","A":"68","D":"ある（4～9回）","B":"学生バイトあり"}},{"r":83,"c":{"C":"既婚","E":"脱毛期間と方法について","A":"69","D":"ある（4～9回）","B":"学生バイトあり"}},{"r":84,"c":{"C":"既婚","E":"料金やプランについて","A":"70","D":"ある（10回以上）","B":"学生バイトあり"}},{"r":85,"c":{"C":"既婚","E":"痛み赤みについて・脱毛前後のケア方法について","A":"71","D":"ある（10回以上）","B":"学生バイトあり"}},{"r":86,"c":{"C":"既婚","E":"脱毛期間と方法について","A":"72","D":"ある（10回以上）","B":"学生バイトあり"}},{"r":87,"c":{"C":"未婚（彼女なし）","E":"料金やプランについて","A":"73","D":"なし","B":"自営業"}},{"r":88,"c":{"C":"未婚（彼女なし）","E":"痛み赤みについて・脱毛前後のケア方法について","A":"74","D":"なし","B":"自営業"}},{"r":89,"c":{"C":"未婚（彼女なし）","E":"脱毛期間と方法について","A":"75","D":"なし","B":"自営業"}},{"r":90,"c":{"C":"未婚（彼女なし）","E":"料金やプランについて","A":"76","D":"ある（3回以下）","B":"自営業"}},{"r":91,"c":{"C":"未婚（彼女なし）","E":"痛み赤みについて・脱毛前後のケア方法について","A":"77","D":"ある（3回以下）","B":"自営業"}},{"r":92,"c":{"C":"未婚（彼女なし）","E":"脱毛期間と方法について","A":"78","D":"ある（3回以下）","B":"自営業"}},{"r":93,"c":{"C":"未婚（彼女なし）","E":"料金やプランについて","A":"79","D":"ある（4～9回）","B":"自営業"}},{"r":94,"c":{"C":"未婚（彼女なし）","E":"痛み赤みについて・脱毛前後のケア方法について","A":"80","D":"ある（4～9回）","B":"自営業"}},{"r":95,"c":{"C":"未婚（彼女なし）","E":"脱毛期間と方法について","A":"81","D":"ある（4～9回）","B":"自営業"}},{"r":96,"c":{"C":"未婚（彼女なし）","E":"料金やプランについて","A":"82","D":"ある（10回以上）","B":"自営業"}},{"r":97,"c":{"C":"未婚（彼女なし）","E":"痛み赤みについて・脱毛前後のケア方法について","A":"83","D":"ある（10回以上）","B":"自営業"}},{"r":98,"c":{"C":"未婚（彼女なし）","E":"脱毛期間と方法について","A":"84","D":"ある（10回以上）","B":"自営業"}},{"r":99,"c":{"C":"未婚（彼女あり）","E":"料金やプランについて","A":"85","D":"なし","B":"自営業"}},{"r":100,"c":{"C":"未婚（彼女あり）","E":"痛み赤みについて・脱毛前後のケア方法について","A":"86","D":"なし","B":"自営業"}},{"r":101,"c":{"C":"未婚（彼女あり）","E":"脱毛期間と方法について","A":"87","D":"なし","B":"自営業"}},{"r":102,"c":{"C":"未婚（彼女あり）","E":"料金やプランについて","A":"88","D":"ある（3回以下）","B":"自営業"}},{"r":103,"c":{"C":"未婚（彼女あり）","E":"痛み赤みについて・脱毛前後のケア方法について","A":"89","D":"ある（3回以下）","B":"自営業"}},{"r":104,"c":{"C":"未婚（彼女あり）","E":"脱毛期間と方法について","A":"90","D":"ある（3回以下）","B":"自営業"}},{"r":105,"c":{"C":"未婚（彼女あり）","E":"料金やプランについて","A":"91","D":"ある（4～9回）","B":"自営業"}},{"r":106,"c":{"C":"未婚（彼女あり）","E":"痛み赤みについて・脱毛前後のケア方法について","A":"92","D":"ある（4～9回）","B":"自営業"}},{"r":107,"c":{"C":"未婚（彼女あり）","E":"脱毛期間と方法について","A":"93","D":"ある（4～9回）","B":"自営業"}},{"r":108,"c":{"C":"未婚（彼女あり）","E":"料金やプランについて","A":"94","D":"ある（10回以上）","B":"自営業"}},{"r":109,"c":{"C":"未婚（彼女あり）","E":"痛み赤みについて・脱毛前後のケア方法について","A":"95","D":"ある（10回以上）","B":"自営業"}},{"r":110,"c":{"C":"未婚（彼女あり）","E":"脱毛期間と方法について","A":"96","D":"ある（10回以上）","B":"自営業"}},{"r":111,"c":{"C":"既婚","E":"料金やプランについて","A":"97","D":"なし","B":"自営業"}},{"r":112,"c":{"C":"既婚","E":"痛み赤みについて・脱毛前後のケア方法について","A":"98","D":"なし","B":"自営業"}},{"r":113,"c":{"C":"既婚","E":"脱毛期間と方法について","A":"99","D":"なし","B":"自営業"}},{"r":114,"c":{"C":"既婚","E":"料金やプランについて","A":"100","D":"ある（3回以下）","B":"自営業"}},{"r":115,"c":{"C":"既婚","E":"痛み赤みについて・脱毛前後のケア方法について","A":"101","D":"ある（3回以下）","B":"自営業"}},{"r":116,"c":{"C":"既婚","E":"脱毛期間と方法について","A":"102","D":"ある（3回以下）","B":"自営業"}},{"r":117,"c":{"C":"既婚","E":"料金やプランについて","A":"103","D":"ある（4～9回）","B":"自営業"}},{"r":118,"c":{"C":"既婚","E":"痛み赤みについて・脱毛前後のケア方法について","A":"104","D":"ある（4～9回）","B":"自営業"}},{"r":119,"c":{"C":"既婚","E":"脱毛期間と方法について","A":"105","D":"ある（4～9回）","B":"自営業"}},{"r":120,"c":{"C":"既婚","E":"料金やプランについて","A":"106","D":"ある（10回以上）","B":"自営業"}},{"r":121,"c":{"C":"既婚","E":"痛み赤みについて・脱毛前後のケア方法について","A":"107","D":"ある（10回以上）","B":"自営業"}},{"r":122,"c":{"C":"既婚","E":"脱毛期間と方法について","A":"108","D":"ある（10回以上）","B":"自営業"}},{"r":123,"c":{"C":"未婚（彼女なし）","E":"料金やプランについて","A":"109","D":"なし","B":"公務員"}},{"r":124,"c":{"C":"未婚（彼女なし）","E":"痛み赤みについて・脱毛前後のケア方法について","A":"110","D":"なし","B":"公務員"}},{"r":125,"c":{"C":"未婚（彼女なし）","E":"脱毛期間と方法について","A":"111","D":"なし","B":"公務員"}},{"r":126,"c":{"C":"未婚（彼女なし）","E":"料金やプランについて","A":"112","D":"ある（3回以下）","B":"公務員"}},{"r":127,"c":{"C":"未婚（彼女なし）","E":"痛み赤みについて・脱毛前後のケア方法について","A":"113","D":"ある（3回以下）","B":"公務員"}},{"r":128,"c":{"C":"未婚（彼女なし）","E":"脱毛期間と方法について","A":"114","D":"ある（3回以下）","B":"公務員"}},{"r":129,"c":{"C":"未婚（彼女なし）","E":"料金やプランについて","A":"115","D":"ある（4～9回）","B":"公務員"}},{"r":130,"c":{"C":"未婚（彼女なし）","E":"痛み赤みについて・脱毛前後のケア方法について","A":"116","D":"ある（4～9回）","B":"公務員"}},{"r":131,"c":{"C":"未婚（彼女なし）","E":"脱毛期間と方法について","A":"117","D":"ある（4～9回）","B":"公務員"}},{"r":132,"c":{"C":"未婚（彼女なし）","E":"料金やプランについて","A":"118","D":"ある（10回以上）","B":"公務員"}},{"r":133,"c":{"C":"未婚（彼女なし）","E":"痛み赤みについて・脱毛前後のケア方法について","A":"119","D":"ある（10回以上）","B":"公務員"}},{"r":134,"c":{"C":"未婚（彼女なし）","E":"脱毛期間と方法について","A":"120","D":"ある（10回以上）","B":"公務員"}},{"r":135,"c":{"C":"未婚（彼女あり）","E":"料金やプランについて","A":"121","D":"なし","B":"公務員"}},{"r":136,"c":{"C":"未婚（彼女あり）","E":"痛み赤みについて・脱毛前後のケア方法について","A":"122","D":"なし","B":"公務員"}},{"r":137,"c":{"C":"未婚（彼女あり）","E":"脱毛期間と方法について","A":"123","D":"なし","B":"公務員"}},{"r":138,"c":{"C":"未婚（彼女あり）","E":"料金やプランについて","A":"124","D":"ある（3回以下）","B":"公務員"}},{"r":139,"c":{"C":"未婚（彼女あり）","E":"痛み赤みについて・脱毛前後のケア方法について","A":"125","D":"ある（3回以下）","B":"公務員"}},{"r":140,"c":{"C":"未婚（彼女あり）","E":"脱毛期間と方法について","A":"126","D":"ある（3回以下）","B":"公務員"}},{"r":141,"c":{"C":"未婚（彼女あり）","E":"料金やプランについて","A":"127","D":"ある（4～9回）","B":"公務員"}},{"r":142,"c":{"C":"未婚（彼女あり）","E":"痛み赤みについて・脱毛前後のケア方法について","A":"128","D":"ある（4～9回）","B":"公務員"}},{"r":143,"c":{"C":"未婚（彼女あり）","E":"脱毛期間と方法について","A":"129","D":"ある（4～9回）","B":"公務員"}},{"r":144,"c":{"C":"未婚（彼女あり）","E":"料金やプランについて","A":"130","D":"ある（10回以上）","B":"公務員"}},{"r":145,"c":{"C":"未婚（彼女あり）","E":"痛み赤みについて・脱毛前後のケア方法について","A":"131","D":"ある（10回以上）","B":"公務員"}},{"r":146,"c":{"C":"未婚（彼女あり）","E":"脱毛期間と方法について","A":"132","D":"ある（10回以上）","B":"公務員"}},{"r":147,"c":{"C":"既婚","E":"料金やプランについて","A":"133","D":"なし","B":"公務員"}},{"r":148,"c":{"C":"既婚","E":"痛み赤みについて・脱毛前後のケア方法について","A":"134","D":"なし","B":"公務員"}},{"r":149,"c":{"C":"既婚","E":"脱毛期間と方法について","A":"135","D":"なし","B":"公務員"}},{"r":150,"c":{"C":"既婚","E":"料金やプランについて","A":"136","D":"ある（3回以下）","B":"公務員"}},{"r":151,"c":{"C":"既婚","E":"痛み赤みについて・脱毛前後のケア方法について","A":"137","D":"ある（3回以下）","B":"公務員"}},{"r":152,"c":{"C":"既婚","E":"脱毛期間と方法について","A":"138","D":"ある（3回以下）","B":"公務員"}},{"r":153,"c":{"C":"既婚","E":"料金やプランについて","A":"139","D":"ある（4～9回）","B":"公務員"}},{"r":154,"c":{"C":"既婚","E":"痛み赤みについて・脱毛前後のケア方法について","A":"140","D":"ある（4～9回）","B":"公務員"}},{"r":155,"c":{"C":"既婚","E":"脱毛期間と方法について","A":"141","D":"ある（4～9回）","B":"公務員"}},{"r":156,"c":{"C":"既婚","E":"料金やプランについて","A":"142","D":"ある（10回以上）","B":"公務員"}},{"r":157,"c":{"C":"既婚","E":"痛み赤みについて・脱毛前後のケア方法について","A":"143","D":"ある（10回以上）","B":"公務員"}},{"r":158,"c":{"C":"既婚","E":"脱毛期間と方法について","A":"144","D":"ある（10回以上）","B":"公務員"}},{"r":159,"c":{"C":"未婚（彼女なし）","E":"料金やプランについて","A":"145","D":"なし","B":"派遣社員"}},{"r":160,"c":{"C":"未婚（彼女なし）","E":"痛み赤みについて・脱毛前後のケア方法について","A":"146","D":"なし","B":"派遣社員"}},{"r":161,"c":{"C":"未婚（彼女なし）","E":"脱毛期間と方法について","A":"147","D":"なし","B":"派遣社員"}},{"r":162,"c":{"C":"未婚（彼女なし）","E":"料金やプランについて","A":"148","D":"ある（3回以下）","B":"派遣社員"}},{"r":163,"c":{"C":"未婚（彼女なし）","E":"痛み赤みについて・脱毛前後のケア方法について","A":"149","D":"ある（3回以下）","B":"派遣社員"}},{"r":164,"c":{"C":"未婚（彼女なし）","E":"脱毛期間と方法について","A":"150","D":"ある（3回以下）","B":"派遣社員"}},{"r":165,"c":{"C":"未婚（彼女なし）","E":"料金やプランについて","A":"151","D":"ある（4～9回）","B":"派遣社員"}},{"r":166,"c":{"C":"未婚（彼女なし）","E":"痛み赤みについて・脱毛前後のケア方法について","A":"152","D":"ある（4～9回）","B":"派遣社員"}},{"r":167,"c":{"C":"未婚（彼女なし）","E":"脱毛期間と方法について","A":"153","D":"ある（4～9回）","B":"派遣社員"}},{"r":168,"c":{"C":"未婚（彼女なし）","E":"料金やプランについて","A":"154","D":"ある（10回以上）","B":"派遣社員"}},{"r":169,"c":{"C":"未婚（彼女なし）","E":"痛み赤みについて・脱毛前後のケア方法について","A":"155","D":"ある（10回以上）","B":"派遣社員"}},{"r":170,"c":{"C":"未婚（彼女なし）","E":"脱毛期間と方法について","A":"156","D":"ある（10回以上）","B":"派遣社員"}},{"r":171,"c":{"C":"未婚（彼女あり）","E":"料金やプランについて","A":"157","D":"なし","B":"派遣社員"}},{"r":172,"c":{"C":"未婚（彼女あり）","E":"痛み赤みについて・脱毛前後のケア方法について","A":"158","D":"なし","B":"派遣社員"}},{"r":173,"c":{"C":"未婚（彼女あり）","E":"脱毛期間と方法について","A":"159","D":"なし","B":"派遣社員"}},{"r":174,"c":{"C":"未婚（彼女あり）","E":"料金やプランについて","A":"160","D":"ある（3回以下）","B":"派遣社員"}},{"r":175,"c":{"C":"未婚（彼女あり）","E":"痛み赤みについて・脱毛前後のケア方法について","A":"161","D":"ある（3回以下）","B":"派遣社員"}},{"r":176,"c":{"C":"未婚（彼女あり）","E":"脱毛期間と方法について","A":"162","D":"ある（3回以下）","B":"派遣社員"}},{"r":177,"c":{"C":"未婚（彼女あり）","E":"料金やプランについて","A":"163","D":"ある（4～9回）","B":"派遣社員"}},{"r":178,"c":{"C":"未婚（彼女あり）","E":"痛み赤みについて・脱毛前後のケア方法について","A":"164","D":"ある（4～9回）","B":"派遣社員"}},{"r":179,"c":{"C":"未婚（彼女あり）","E":"脱毛期間と方法について","A":"165","D":"ある（4～9回）","B":"派遣社員"}},{"r":180,"c":{"C":"未婚（彼女あり）","E":"料金やプランについて","A":"166","D":"ある（10回以上）","B":"派遣社員"}},{"r":181,"c":{"C":"未婚（彼女あり）","E":"痛み赤みについて・脱毛前後のケア方法について","A":"167","D":"ある（10回以上）","B":"派遣社員"}},{"r":182,"c":{"C":"未婚（彼女あり）","E":"脱毛期間と方法について","A":"168","D":"ある（10回以上）","B":"派遣社員"}},{"r":183,"c":{"C":"既婚","E":"料金やプランについて","A":"169","D":"なし","B":"派遣社員"}},{"r":184,"c":{"C":"既婚","E":"痛み赤みについて・脱毛前後のケア方法について","A":"170","D":"なし","B":"派遣社員"}},{"r":185,"c":{"C":"既婚","E":"脱毛期間と方法について","A":"171","D":"なし","B":"派遣社員"}},{"r":186,"c":{"C":"既婚","E":"料金やプランについて","A":"172","D":"ある（3回以下）","B":"派遣社員"}},{"r":187,"c":{"C":"既婚","E":"痛み赤みについて・脱毛前後のケア方法について","A":"173","D":"ある（3回以下）","B":"派遣社員"}},{"r":188,"c":{"C":"既婚","E":"脱毛期間と方法について","A":"174","D":"ある（3回以下）","B":"派遣社員"}},{"r":189,"c":{"C":"既婚","E":"料金やプランについて","A":"175","D":"ある（4～9回）","B":"派遣社員"}},{"r":190,"c":{"C":"既婚","E":"痛み赤みについて・脱毛前後のケア方法について","A":"176","D":"ある（4～9回）","B":"派遣社員"}},{"r":191,"c":{"C":"既婚","E":"脱毛期間と方法について","A":"177","D":"ある（4～9回）","B":"派遣社員"}},{"r":192,"c":{"C":"既婚","E":"料金やプランについて","A":"178","D":"ある（10回以上）","B":"派遣社員"}},{"r":193,"c":{"C":"既婚","E":"痛み赤みについて・脱毛前後のケア方法について","A":"179","D":"ある（10回以上）","B":"派遣社員"}},{"r":194,"c":{"C":"既婚","E":"脱毛期間と方法について","A":"180","D":"ある（10回以上）","B":"派遣社員"}}]},{"name":"①職業","rows":[{"r":2,"c":{"B":"◆トーク\n◇アウト"}},{"r":3,"c":{"C":"アウト潰しトーク内容","D":"アウト返しトーク内容","B":"【学生】"}},{"r":4,"c":{"C":"①質問事項\n今日休みですか\nサークル部活してますか、何してますか、忙しいですか\nちなみにバイトなにしてるんですか、長いんですか\n一人暮らしですか、地元はどこですか","B":"◆アイスブレイクトーク"}},{"r":5,"c":{"C":"① 脱毛をスタートできなくなる2つのパターン\n「脱毛をスタートできなくなってしまう方には、2つのパターンがあります。1つはご結婚されている方、もう1つは親御様にご相談される方です。」\n② 身近な方に相談したときに起こること\n「例えば、奥様や親御様、特にお母様にご相談されると、ほぼ100％の方が「高いからやめておいたら？ また今度でいいんじゃない？」と言われてしまいます。」\n③ 先延ばしにした結果\n「一度断られた話をもう一度相談するのは難しくなってしまい、「いつか、いつか」と先延ばしにしているうちに、結局脱毛をしないまま毛だけが濃くなっていきます。気づいたときには目安の倍以上の回数が必要になっていたり、肌荒れが起きてからようやく「まずい」と来店されたりする方も少なくありません。」\n④ ご自身で決めていただく理由\n結局のところ、男性の毛のお悩みは男性にしかわかりませんし、毎日ヒゲを剃っているのもご本人です。だからこそ、皆様ご自身で決めていただいています。\nこのお悩みは、○○様ご自身だけのお悩みです。ご自身のご予算の範囲内で、少しでも今の状態を変えていけるようにしていきましょう。","B":"◇親に一度確認したい"}},{"r":6,"c":{"C":"① 費用面でお客様が本当に気にされていること\n「脱毛を始めるにあたって、一番気になるのはやっぱり費用面ですよね。\n実は、多くのお客様がハードルに感じているのは、トータルの金額よりも『お支払い方法』なんです。」\n② 月々払いが主流である理由\n「脱毛は1回で終わるものではなく、通いながら少しずつ変化を実感していくものです。そのため、お支払いも少しずつ、いわゆる月々払いにされる方がほとんどです。」\n③ サロンによって異なる月々払いの条件\n「ただ、この月々払いの条件はサロンによって異なり、たとえば、\n・クレジットカードが必須\n・最初に頭金として数万円が必要\nといったケースもあります。せっかく始めようと思っても、こうした条件があると踏み出しにくいですよね？」\n（→お客様の反応を見る）\n④ ストラッシュメンズのお支払い方法\n「その点、ストラッシュメンズはお支払い方法の自由度が高いサロンです。月々のお支払い額も期間も、○○様のご都合に合わせて設定していただけますので、無理のない形でスタートしていただけます。」\n⑤ 寄り添いの一言\n「このあと、○○様にとって一番続けやすいプランを、一緒に考えていきましょう。」","D":"① 初めての不安に寄り添う\n「初めてだと心配ですよね。費用面については、○○様だけではなく、多くのお客様が抱えていらっしゃるお悩みなんです。」\n② お客様が本当に気にされていること\n「実は、脱毛を始めるにあたって、多くのお客様がハードルに感じているのは、トータルの金額よりも『お支払い方法』なんです。」\n③ 月々払いが主流である理由\n「脱毛は1回で終わるものではなく、通いながら少しずつ変化を実感していくものです。そのため、お支払いも少しずつ、いわゆる月々払いにされる方がほとんどです。」\n④ サロンによって異なる月々払いの条件\n「ただ、この月々払いの条件はサロンによって異なり、たとえば、\n・クレジットカードが必須\n・最初に頭金として数万円が必要\nといったケースもあります。せっかく始めようと思っても、こうした条件があると踏み出しにくいですよね？」\n（→お客様の反応を見る）\n⑤ ストラッシュメンズのお支払い方法\n「その点、ストラッシュメンズはお支払い方法の自由度が高いサロンです。月々のお支払い額も期間も、○○様のご都合に合わせて設定していただけますので、無理のない形でスタートしていただけます。どうぞご安心ください。」\n⑥ 寄り添いの一言\n「○○様が『これなら問題なく始められそう』と思えるプランを一緒に考えていきますので、何でもお気軽におっしゃってくださいね。」","B":"◇大きいお買い物が初めてで不安（支払い・脱毛スタート）"}},{"r":7,"c":{"C":"※実家暮らしの場合により発生しやすい\n場面：TR（トライアル）のタイミング\n① 休日の過ごし方から、お金の出どころを自然に聞く\n「普段お休みの日は何をされているんですか？いいですね！そういったご予定は、ご自身の貯金などから出されているんですか？それとも、お小遣いをもらっているんですか？」\n② 月々数千円で始められることを伝える\n「脱毛も、皆様月に数千円くらいからスタートできますので、1日100円抑えるだけで始められるんですよ。」\n③ 学生様でも無理なく始められることを伝える\n「ですので、金欠の学生様でも、貯金やお小遣いの中から、私生活を圧迫しない範囲でスタートしていただけます。」\n④ 身近な例えで、始めた先の姿をイメージしてもらう\n「1日100円、たとえばコンビニでお菓子を1個我慢するくらいで脱毛を始めて、今の状態がきれいになったら、いかがですか？」","B":"◇お金の管理が親御様"}},{"r":11,"c":{"B":"【自営業】"}},{"r":12,"c":{"D":"① 脱毛サロンには大きく分けて2種類ある\n「脱毛サロンにはたくさんの種類がありますが、大きく分けると、大手と個人サロンがあります。」\n② 個人サロンの良いところと注意点\n「個人サロンの良いところは、入口として始めやすいことです。ただ、終わりが見えにくいため、途中で大手に切り替えて続けていかれる方が多いんです。」\n③ なぜ終わりが見えにくいのか\n（→お客様に「なんで終わりが見えないんだろう？」と問いかける）\n「それは、出力や機械、通い方、波長がそれぞれ違うためなんです。」\n④ 大手の強み\n「大手はそのあたりがしっかり考えられているので、脱毛効果はもちろん、安心感も得られるんですね。」","B":"◇知り合いが脱毛していてそこも見てみたい"}},{"r":13,"c":{"D":"① お支払いの不安に共感する\n「そうなんですね。お支払いのことで不安があるという方、実は結構いらっしゃるんですよ。」\n② ストラッシュメンズの分割の特徴\n「ストラッシュメンズの分割は自由度が高く、過去にお支払いのことで心配があった方でも、実際にご利用いただいている方が多いんです。」\n③ ご都合に合わせて設定できる\n「月々のお支払い額も期間も、○○様のご都合に合わせて設定していただけますので、無理のない形でスタートしていただけます。」\n④ 同じ不安を持っていた方の事例\n「○○様と同じように、最初は不安だったけれど、やってみたら大丈夫だった、という方も珍しくありませんよ。」\n⑤ 審査についてのご安心ポイント\n「それに、審査は申し込みだけでしたら費用もかかりませんし、その場ですぐに結果がわかります。もし通らなかったとしても、別のお支払い方法でプランを組み直せますので、○○様が損をすることは一切ありません。どうぞご安心ください。」","B":"◇分割が嫌だ（ブラックだから）"}},{"r":14,"c":{"D":"① カードがなくても問題ないことを伝える\n「ご安心ください。カードがなくても全く問題ありません。」\n② カードをお持ちでない方も多いことを伝える\n「実は、カードをお持ちでない方も多くいらっしゃいます。ストラッシュメンズはお支払い方法の自由度が高いサロンです。」\n③ ご都合に合わせて設定できる\n「月々の金額や期間も○○様に合わせて決められますので、カードがないから始められない、ということはありませんよ。」\n④ プランのご提案へ\n「一緒にちょうどいいプランを考えていきましょう。」","B":"◇クレジットカード持っていません"}},{"r":15,"c":{"D":"① 一括でのご検討への感謝\n「一括で考えていただけるのは、本当にありがたいです。しっかりご検討くださっているんですね。」\n② 前払金保証制度のご案内\n「ちなみに、ストラッシュメンズは前払金保証制度に加入しておりますので、万が一のときもきちんと守られます。その点はご安心ください。」\n③ 余裕がある方でも分割を選ばれる理由\n「そのうえで一つだけお伝えさせてください。実は、お金に余裕がある方でも、あえて分割を選ばれる方が多いんです。手元にまとまったお金を残しておけるので、急な出費があっても慌てずに済みます。」\n④ 途中で一括に切り替えられる\n「お支払いは、まず分割でスタートしていただいて、途中で一括に切り替えることもできるんです。たとえば、最初は月々払いで始めて、何回か通って効果を実感していただいたうえで、『脱毛してよかったな』と思ったタイミングで、残りをまとめてお支払いいただく形ですね。途中で一括にしていただくと、その分の分割手数料が減る可能性もあります。」\n⑤ 通うペースに合わせたお支払い\n「脱毛は時間をかけて通うものですので、お支払いも通うペースに合わせて少しずつ、という方が、気持ち的にもラクなんですよね。」\n⑥ お客様のお考えを伺う\n「○○様はどう思われますか？」","B":"◇どうせやるなら一括でやりたい"}},{"r":16,"c":{"D":"① お金の面を気にされていないことへの共感\n「ありがとうございます。お金の面は気にされていないんですね。ただ、脱毛はお金よりも『時間』がかかるものなんです。」\n② 脱毛にかかる期間\n「先ほどお伝えしたとおり、毛には生え変わりの周期があるので、1回で全部の毛に効くわけではありません。2週間〜1か月に1回のペースで通って、変化を実感するまでに【半年〜1年以上】ほどかかります。」\n③ 始める時期による違い\n「今から始めれば、来年の○○ごろにはかなり変わった状態で迎えられますが、たとえば春からのスタートですと、夏には間に合わないんですね。」\n④ 早く始めるメリット\n「それに、ヒゲであれば毎朝剃る時間も、始めるのが早いほど早くなくなっていきます。」\n⑤ 始めるタイミングの重要性\n「ご料金ももちろん大事ですが、始めるタイミングもかなり重要です。始めるのが遅れた分だけ、今のお手入れの手間が続いてしまうのが、一番もったいないかなと思います。」\n⑥ 今回のタイミングのご提案\n「○○様には、今回さまざまなCPをご利用いただけますので、タイミングとしては一番よいときです。○○様に脱毛を少しでもやりたいお気持ちがあるのであれば、私としては、今回ぜひサポートさせていただきたいのですが、いかがでしょうか？」","B":"◇お金はあるので、定価になっちゃってもいいので今は大丈夫です"}},{"r":17,"c":{"D":"① 都度払いの良さに共感する\n「1回1回お支払いするのって、気楽でいいですよね。」\n② 都度払いが「終わらない脱毛」と言われる理由\n「ただ、都度払いは『終わらない脱毛』ともいわれているんです。1回1回の積み重ねだと、実際にどのくらい回数が必要なのかがわからなくなってしまいますし、回数が見えないことで、トータルコストも右肩上がりになりやすいんですね。」\n③ 身近な例えでイメージしてもらう\n「たとえば、携帯のギガが足りないときに、1ギガずつ買うよりも、5ギガや10ギガでまとめて買った方が安くなるじゃないですか。」\n④ まとめて購入し、月々で分ける方法のご提案\n「脱毛も回数が必要なものですので、ある程度まとめて購入して、それを月々で分けていく方が、終わったときのトータルコストを抑えやすいんです。」","B":"◇都度払いがいい"}},{"r":21,"c":{"B":"【公務員】"}},{"r":22,"c":{"D":"① 肯定する\n「もちろんです！大事なお金のことなので、しっかり考えて決めていただきたいです。\n慎重に考えてくださる方の方が、始めてからも納得して通っていただけるので、私もその方がうれしいです。」\n② 「考える」を今この場でやる\n「ちなみに、帰ってから考えるとしたら、どのあたりを考えたいですか？\n金額やお支払いのこと、効果や回数のこと、痛みや肌のこと、通うペースのこと…このあたりだと、どれが一番気になっていますか？」\n（→ 出てきた不安を、該当のアウト返しトークで一つずつ解消）\nありがとうございます。今お話しした〇〇の部分は、イメージできましたか？\n他に、まだ判断しきれていないところはありますか？\n（→「特にない」となるまで確認する。ここで不安が残っているなら、無理に次に進まない）\n③ 今日決める理由を、事実として伝える\n「よかったです。もし今の時点で引っかかっているところがないようでしたら、判断材料として2つだけお伝えさせてください。\n一つは、始めるタイミングです。\n脱毛は【〇ヶ月〜1年】かけて少しずつ変化していくので、始めるのが1ヶ月遅れると、終わるのも1ヶ月遅れます。今から始めていただくと、【来年の春〜夏】頃にはかなり変化を感じていただけている時期になります。毎朝のヒゲ剃りも、始めた日から少しずつラクになっていきます。\nもう一つは、今日の特典です。\n本日お申し込みいただいた方には【通常〇円のところ〇円／〇〇の特典】があります。\n（→ 料金表・書面で、通常価格と当日特典を並べて見せる）\n月々にすると【〇円】からスタートできます。」\n④ 判断を委ねる\n「なので、もう考えることがなければ、特典が使える今日始めていただくのが一番お得かなと思います。\nただ、ご家族と相談したい、もう少し比べたいということであれば、それも全然大丈夫です。その場合は、今日の内容をまとめた資料をお渡ししますね。〇〇様が納得できる方で決めてください。」","B":"◇しっかり考えたい（真面目な方）"}},{"r":23,"c":{"D":"① 受け止めて、出張のペースを聞く「お仕事お忙しいんですね。せっかく始めても通えなかったらもったいないので、そこを気にされるのはすごく大事だと思います。\nちなみに、出張はどのくらいのペースで行かれることが多いですか？」\n（例：月に何日くらい／1回あたり何日くらい／決まった地域か）\n② 通い方の柔軟さを伝える\n「ありがとうございます。それでしたら、ストラッシュメンズは〇〇様にピッタリかと思います！\nストラッシュメンズは、【全国に40店舗以上あって、契約した店舗以外でも予約が取れる】ので、出張先の近くの店舗で受けていただくこともできるんです。\nそれに、【1回の施術時間はおひげで10分ほど、全身で1時間ほど】なので、出張の合間や、仕事帰りにも寄っていただきやすいですし、【営業時間は20時まで／土日も営業】なので、空いているタイミングで予約を入れていただけます。」\n③ 間が空いても大丈夫なことを伝える\n「通うペースも、【約2週間〜】の目安はありますが、毎回ぴったりじゃなくても大丈夫です。出張で少し間が空いても、その分効果が完全になくなるわけではないので、戻ってきたタイミングでまた続けていただければ問題ありません。\n【コースの有効期限も〇年/か月】あるので、忙しい時期があっても焦らず通っていただけますよ。」\n④ 予定に合わせた通い方を一緒に決める\n「なので、たとえば\n・出張から戻った週に予約を入れておく\n・出張先の近くの店舗で受ける\n・次回の予約を施術の帰りに決めておく\nといった形で、〇〇様のスケジュールに合わせて一緒に組み立てていきましょう。\nそれでも、もし本当に通えなくなってしまった場合は、途中で解約することもできます。\nその場合は、受けていただいた回数分の料金と所定の解約手数料を差し引いた金額をお返しする形になりますし、前払金保証制度にも入っているので安心してくださいね。」","B":"◇出張が多くて通えるかわからない"}},{"r":27,"c":{"B":"【派遣社員】"}},{"r":28,"c":{"D":"① カードがなくても問題ないことを伝える\n「ご安心ください。カードがなくても全く問題ありません。」\n② カードをお持ちでない方も多いことを伝える\n「実は、カードをお持ちでない方も多くいらっしゃいます。ストラッシュメンズはお支払い方法の自由度が高いサロンです。」\n③ ご都合に合わせて設定できる\n「月々の金額や期間も○○様に合わせて決められますので、カードがないから始められない、ということはありませんよ。」\n④ プランのご提案へ\n「一緒にちょうどいいプランを考えていきましょう。」","B":"◇クレジットカード持っていません"}},{"r":29,"c":{"D":"① 受け止める\n「そうですよね。毎月決まった金額を払い続けるとなると、収入に波があるとすごく不安になりますよね。そこをちゃんと考えていらっしゃるのは、すごく大事なことだと思います。」\n② 基準を「一番少ない月」に置く\n「なので、ご提案なんですが、月々の金額は**『収入が一番少ない月でも無理なく払える金額』**で決めるのがおすすめなんです。\n差し支えなければ、毎月の中で『このくらいなら、どんな月でも大丈夫』という金額って、どのくらいでしょう？」\n（→ 収入の詳細は聞かず、「払える金額」だけを聞く）\n③ その金額に合わせてプランを組む\n「ありがとうございます。それでしたら、【月〇円】で、期間を【〇回払い】にすれば、その範囲に収まります。\nストラッシュメンズは、月々の金額や期間を〇〇様に合わせて設定できるので、無理のない金額でスタートしていただけるんです。\nもし、それでも少し不安でしたら、まずは一番気になる部位だけ・回数を絞ったプランから始めて、余裕が出てきたら追加する、という形もできますよ。」\n④ 余裕がある月の選択肢と、万が一の安心材料\n「逆に、収入が多い月があれば、途中で残りを一括でお支払いいただくこともできます。そうすると、手数料が減る可能性もあります。\nそれに、もしどうしても続けられない状況になってしまった場合は、途中で解約することもできます。その場合は、受けていただいた回数分の料金と所定の解約手数料を差し引いた金額をお返しする形です。\n前払金保証制度もございますので、そこは安心してくださいね。\nなので、『続けられるかどうか』を心配するより、『どんな月でも払える金額』で始めておけば、無理なく通っていただけると思います。\n〇〇様が安心して通えるようにどんなことでもサポートいたしますので何でも言ってくださいね！\nちなみにこのプランだとどうですか？」","B":"◇収入が不安定だから続けることができるか不安"}}]},{"name":"②婚姻","rows":[{"r":2,"c":{"B":"◆トーク\n◇アウト"}},{"r":3,"c":{"C":"アウト潰しトーク内容","D":"アウト返しトーク内容","B":"【未婚彼女あり】"}},{"r":4,"c":{"B":"◇パートナーに確認したい"}},{"r":5,"c":{"B":"◇お金の管理が彼女様"}},{"r":8,"c":{"B":"【既婚】"}},{"r":9,"c":{"B":"◇パートナーに確認したい"}},{"r":10,"c":{"B":"◇お金の管理が奥様"}}]},{"name":"③脱毛経験","rows":[{"r":2,"c":{"B":"◆トーク\n◇アウト"}},{"r":3,"c":{"C":"アウト潰しトーク内容","D":"アウト返しトーク内容","B":"【ある（4～9回）】"}},{"r":4,"c":{"D":"① 比較したいお気持ちを受け止める\n「他とも比較したいというお気持ち、すごくよくわかります。大きなお買い物ですし、慎重になるのは当然だと思います。」\n② 比較で気になっている点を確認する\n「ちなみに、比較して確認したいのは、料金のことですか？それとも、効果や通いやすさのことですか？」\n（→具体的な懸念を聞く）\n③ 今日の時点で確認できていることを整理する\n「今日お話しした中で、○○様が気にされていた【料金・痛み・通いやすさ】については、いかがでしたか？もし他に気になる点があれば、この場でお答えしますね。」\n（→お客様の反応を見る）\n④ 今日始めるメリットを伝える\n「それと、今回ご案内している特典やCPは、本日のお申し込みが対象となっております。同じ条件でご案内できるのは今日だけですので、お伝えしておきますね。」\n⑤ご意向を伺う\n「分割でしたら、最初の月のお支払いは【○円】くらいです。○○様は、今日のうちに始めるのと、一度持ち帰って考えるのと、どちらが安心できそうですか？」","B":"◇他も比較したい"}},{"r":5,"c":{"C":"① 硬毛化とは\n「硬毛化というのは、約10人に1人の確率で、本来は毛が減るはずの部位で、かえって毛が太く、濃く、硬くなってしまう現象のことです。特に産毛が多いところで発症することがあります。」\n② 硬毛化のリスクが高い部位\n「うなじ・肩・二の腕・背中は、エステ脱毛でも硬毛化のリスクが高い部位です。」\n③ 年代による違い\n「40代以上のお客様ですと、濃い毛が密集していることが多いのですが、30代やそれ以下のお客様の場合は、まだ産毛も交じっています。そのため、濃い毛を減らしている途中で、産毛が濃くなるリスクはあります。」","B":"◆硬毛化リスクについて"}},{"r":6,"c":{"C":"① 医療の全身脱毛プランが高くなる理由\n「医療で全身脱毛プランが高くなる理由として、脱毛機器代や医師・看護師の人件費のほかに、施術時間が関係してきます。施術時間が2〜3時間かかるケースもあるほど長く、それに比例してプランの料金も高くなるためです。マッサージやヘッドスパも、施術時間が長ければ料金が高くなりますよね。」\n② 予約が取りづらくなる影響\n「また、施術時間が長いと予約も取りづらくなり、なかなか通えなくなってしまいます。そうなると、毛周期に合わせたベストなタイミングで施術を受けられなくなり、必要な回数がどんどん増えていきます。」\n③ 終わりが見えない不安への問いかけ\n「せっかく脱毛を始めたのに、『いつ終わるんだろう』という気持ちになるのって、嫌じゃないですか？」\n（→お客様の反応を見る）\n④ エステ脱毛の強み\n「その点、エステ脱毛は施術時間が1時間前後と短く、予約も取りやすいので、毛周期に合わせてしっかり通えます。」\n⑤ コスパの良さ\n「結果的に必要な回数も増えにくいので、コスパよくきれいになれる、というわけなんですよね。」","B":"◆医療で全身が高い理由"}},{"r":12,"c":{"B":"【ある（10回以上）】"}},{"r":13,"c":{"D":"① 比較したいお気持ちを受け止める\n「他とも比較したいというお気持ち、すごくよくわかります。大きなお買い物ですし、慎重になるのは当然だと思います。」\n② 比較で気になっている点を確認する\n「ちなみに、比較して確認したいのは、料金のことですか？それとも、効果や通いやすさのことですか？」\n（→具体的な懸念を聞く）\n③ 今日の時点で確認できていることを整理する\n「今日お話しした中で、○○様が気にされていた【料金・痛み・通いやすさ】については、いかがでしたか？もし他に気になる点があれば、この場でお答えしますね。」\n（→お客様の反応を見る）\n④ 今日始めるメリットを伝える\n「それと、今回ご案内している特典やCPは、本日のお申し込みが対象となっております。同じ条件でご案内できるのは今日だけですので、お伝えしておきますね。」\n⑤ご意向を伺う\n「分割でしたら、最初の月のお支払いは【○円】くらいです。○○様は、今日のうちに始めるのと、一度持ち帰って考えるのと、どちらが安心できそうですか？」","B":"◇他も比較したい"}},{"r":14,"c":{"D":"① 今の「きれい」は毎朝の努力の結果\n「ありがとうございます。たしかに〇〇様、すごくきれいにされていますよね。\n先ほど、毎朝【〇分くらい】かけて剃っているとおっしゃっていましたよね。ということは、今のきれいな状態は、〇〇様が毎日時間と手間をかけて保っているものなんですよね。」\n②「剃って保つきれい」から「剃らなくていいきれい」へ\n「先ほど【朝の時間がもったいない／カミソリ負けする／夕方には青くなる】ともおっしゃっていましたが、脱毛は今のきれいな状態を、剃らなくても保ちやすくしていくものなんです。\nつまり、見た目を大きく変えるというより、今かけている手間とお金を減らしていくイメージですね。\nカミソリや替刃、シェービングフォームの代金も毎月かかっていますし、毎朝【〇分】だと、1年で【約〇時間】にもなります。それがこの先ずっと続くと考えると、どこかで置き換えた方がラクかなと思います。」\n③ 必要な分だけ、無理のないプランで\n（それでも金額が気になる場合）\n「もちろん、初めに脱毛していた時みたいにお金をかける必要はないので、【一番気になる部位だけ／回数を絞ったプラン】から始めることもできます。\n月々【〇円】からスタートできるので、〇〇様が『このくらいなら』と思える範囲で、必要な分だけのプランを一緒に考えましょう。」","B":"◇すでにきれいだからそこまでお金かけてやるのはいいかな"}},{"r":15,"c":{"D":"① 目指す状態を一緒に決める\n「なるほど、ありがとうございます。回数は、〇〇様がどこまでの状態を目指すかで変わってくるので、一度そこを確認させてください。\n〇〇様が目指したいのは、\n・少し薄くなって、剃るのがラクになればいい\n・できるだけ剃らなくていい状態にしたい\nどちらに近いですか？」\n② 回答に対する具体的な対策\n（少し薄くなればいい場合）\n「それでしたら、そこまで多い回数じゃなくても大丈夫です！【〇回のプラン】でも、剃る手間が減ってきたと感じていただける方が多いので、まずはそこから始めてみましょう。\nもし通ってみて『もう少し減らしたい』と思われたら、【後から回数を追加することもできます】ので安心してください。」\n（できるだけ剃りたくない場合）\n「そうなんですね。その場合、ヒゲは毛が太くて密集している部位なので、【〇回前後】が目安になります。\n少ない回数で始めて後から追加することもできますが、【最初から必要な回数で初めていただいた方が、1回あたりの料金が〇円安くなる】んです。\nゴールが決まっているなら、最初から必要な回数で始めていただいた方が、結果的にお得かなと思います。どちらがいいか、金額を並べて比べてみましょうか。」","B":"◇そこまで回数いらないかな"}},{"r":16,"c":{"C":"① 硬毛化とは\n「硬毛化というのは、約10人に1人の確率で、本来は毛が減るはずの部位で、かえって毛が太く、濃く、硬くなってしまう現象のことです。特に産毛が多いところで発症することがあります。」\n② 硬毛化のリスクが高い部位\n「うなじ・肩・二の腕・背中は、エステ脱毛でも硬毛化のリスクが高い部位です。」\n③ 年代による違い\n「40代以上のお客様ですと、濃い毛が密集していることが多いのですが、30代やそれ以下のお客様の場合は、まだ産毛も交じっています。そのため、濃い毛を減らしている途中で、産毛が濃くなるリスクはあります。」","B":"◆硬毛化リスクについて"}},{"r":17,"c":{"C":"① 医療の全身脱毛プランが高くなる理由\n「医療で全身脱毛プランが高くなる理由として、脱毛機器代や医師・看護師の人件費のほかに、施術時間が関係してきます。施術時間が2〜3時間かかるケースもあるほど長く、それに比例してプランの料金も高くなるためです。マッサージやヘッドスパも、施術時間が長ければ料金が高くなりますよね。」\n② 予約が取りづらくなる影響\n「また、施術時間が長いと予約も取りづらくなり、なかなか通えなくなってしまいます。そうなると、毛周期に合わせたベストなタイミングで施術を受けられなくなり、必要な回数がどんどん増えていきます。」\n③ 終わりが見えない不安への問いかけ\n「せっかく脱毛を始めたのに、『いつ終わるんだろう』という気持ちになるのって、嫌じゃないですか？」\n（→お客様の反応を見る）\n④ エステ脱毛の強み\n「その点、エステ脱毛は施術時間が1時間前後と短く、予約も取りやすいので、毛周期に合わせてしっかり通えます。」\n⑤ コスパの良さ\n「結果的に必要な回数も増えにくいので、コスパよくきれいになれる、というわけなんですよね。」","B":"◆医療で全身が高い理由"}},{"r":21,"c":{"B":"【ある（3回以下）】"}},{"r":22,"c":{"D":"① 比較したいお気持ちを受け止める\n「他とも比較したいというお気持ち、すごくよくわかります。大きなお買い物ですし、慎重になるのは当然だと思います。」\n② 比較で気になっている点を確認する\n「ちなみに、比較して確認したいのは、料金のことですか？それとも、効果や通いやすさのことですか？」\n（→具体的な懸念を聞く）\n③ 今日の時点で確認できていることを整理する\n「今日お話しした中で、○○様が気にされていた【料金・痛み・通いやすさ】については、いかがでしたか？もし他に気になる点があれば、この場でお答えしますね。」\n（→お客様の反応を見る）\n④ 今日始めるメリットを伝える\n「それと、今回ご案内している特典やCPは、本日のお申し込みが対象となっております。同じ条件でご案内できるのは今日だけですので、お伝えしておきますね。」\n⑤ご意向を伺う\n「分割でしたら、最初の月のお支払いは【○円】くらいです。○○様は、今日のうちに始めるのと、一度持ち帰って考えるのと、どちらが安心できそうですか？」","B":"◇他も比較したい"}},{"r":23,"c":{"D":"① 今の通い方への理解を示す\n「それも一つの通い方ではあります。」\n② 根本の悩みは解決できないことを伝える\n「ただ、それだと根本のお悩みの解決にはなかなか繋がりにくいんです。」\n③ ご費用面から見た提案\n「一番気にされているのがご費用の面ということでしたら、なるべく費用をかけずに、しっかりきれいになれる方が嬉しくないですか？」\n（→お客様の反応を見る）\n④ 不安なお気持ちへの共感\n「ただ、一気に始めることに抵抗があるお気持ちも、すごくよくわかります。」\n⑤ 6回からのご提案\n「一気に12回などでスタートするのではなく、しっかりと効果も実感していただける6回くらいからやってみるのが、費用も抑えつつ、満足して始められるやり方だと思うのですが、いかがですか？」","B":"◇3回やってから効果見て考えたい"}},{"r":24,"c":{"C":"① 硬毛化とは\n「硬毛化というのは、約10人に1人の確率で、本来は毛が減るはずの部位で、かえって毛が太く、濃く、硬くなってしまう現象のことです。特に産毛が多いところで発症することがあります。」\n② 硬毛化のリスクが高い部位\n「うなじ・肩・二の腕・背中は、エステ脱毛でも硬毛化のリスクが高い部位です。」\n③ 年代による違い\n「40代以上のお客様ですと、濃い毛が密集していることが多いのですが、30代やそれ以下のお客様の場合は、まだ産毛も交じっています。そのため、濃い毛を減らしている途中で、産毛が濃くなるリスクはあります。」","B":"◆硬毛化リスクについて"}},{"r":25,"c":{"C":"① 医療の全身脱毛プランが高くなる理由\n「医療で全身脱毛プランが高くなる理由として、脱毛機器代や医師・看護師の人件費のほかに、施術時間が関係してきます。施術時間が2〜3時間かかるケースもあるほど長く、それに比例してプランの料金も高くなるためです。マッサージやヘッドスパも、施術時間が長ければ料金が高くなりますよね。」\n② 予約が取りづらくなる影響\n「また、施術時間が長いと予約も取りづらくなり、なかなか通えなくなってしまいます。そうなると、毛周期に合わせたベストなタイミングで施術を受けられなくなり、必要な回数がどんどん増えていきます。」\n③ 終わりが見えない不安への問いかけ\n「せっかく脱毛を始めたのに、『いつ終わるんだろう』という気持ちになるのって、嫌じゃないですか？」\n（→お客様の反応を見る）\n④ エステ脱毛の強み\n「その点、エステ脱毛は施術時間が1時間前後と短く、予約も取りやすいので、毛周期に合わせてしっかり通えます。」\n⑤ コスパの良さ\n「結果的に必要な回数も増えにくいので、コスパよくきれいになれる、というわけなんですよね。」","B":"◆医療で全身が高い理由"}}]},{"name":"④心配な点（問診表）","rows":[{"r":2,"c":{"B":"◆トーク\n◇アウト"}},{"r":3,"c":{"C":"アウト潰しトーク内容","D":"アウト返しトーク内容","B":"【料金やプランについて】"}},{"r":4,"c":{"D":"① 今の通い方への理解を示す\n「それも一つの通い方ではあります。」\n② 根本の悩みは解決できないことを伝える\n「ただ、それだと根本のお悩みの解決にはなかなか繋がりにくいんです。」\n③ ご費用面から見た提案\n「一番気にされているのがご費用の面ということでしたら、なるべく費用をかけずに、しっかりきれいになれる方が嬉しくないですか？」\n（→お客様の反応を見る）\n④ 不安なお気持ちへの共感\n「ただ、一気に始めることに抵抗があるお気持ちも、すごくよくわかります。」\n⑤ 6回からのご提案\n「一気に12回などでスタートするのではなく、しっかりと効果も実感していただける6回くらいからやってみるのが、費用も抑えつつ、満足して始められるやり方だと思うのですが、いかがですか？」","B":"◇3回やってから効果見て考えたい"}},{"r":5,"c":{"B":"◇思ったより高い"}},{"r":6,"c":{"B":"◇CP見てきたんですけど…"}},{"r":7,"c":{"D":"① 費用への気持ちに共感し、不安の正体を確認する\n「そうですよね。せっかくなら余計なお金はかけたくないですよね。すごく大事なポイントだと思います。\nちなみに、○○様が気になっているのは、総額が増えることですか？それとも、どのくらいかかるのかがわからない、という感じですか？」\n（→多くの場合、「わからないから不安」が本音です）\n② 実際の金額をお見せする\n「では、実際の金額をお見せしますね。\n【一括だと○円、分割の場合は手数料が○円で、総額○円】になります。\n月々にすると【○円】で、そのうち手数料分は月あたり【約○円】くらいなんです。」\n③ 分割のメリットを伝える\n「この【月○円】の差で、手元にまとまったお金を残したまま、効果を実感しながら通っていただけるんですね。」\n④ 途中で一括に切り替えられることを伝える\n「それに、もし途中で『やっぱり残りはまとめて払いたい』と思われたら、途中で一括に切り替えることもできます。そうすると、その分の手数料が減る可能性もありますので、最初から一括にするより、選択肢を残しておけるんです。」\n⑤ 安心材料（前払金保証・途中解約）を伝える\n「ストラッシュメンズは前払金保証制度にも加入していますし、もし合わなかったときは途中解約もできます。その場合は、受けていただいた回数分の料金と所定の解約手数料を差し引いた金額をお返しする形です。」\n⑥ お客様のご意向を伺う\n「ですので、まずは月々の無理のない金額でスタートして、余裕ができたら一括に切り替える、という方が多いんですよ。○○様にとって一番負担の少ない形は、どれになりますか？」","B":"◇手数料が気になる"}},{"r":8,"c":{"D":"① お支払いの不安に共感する\n「そうなんですね。お支払いのことで不安があるという方、実は結構いらっしゃるんですよ。」\n② ストラッシュメンズの分割の特徴\n「ストラッシュメンズの分割は自由度が高く、過去にお支払いのことで心配があった方でも、実際にご利用いただいている方が多いんです。」\n③ ご都合に合わせて設定できる\n「月々のお支払い額も期間も、○○様のご都合に合わせて設定していただけますので、無理のない形でスタートしていただけます。」\n④ 同じ不安を持っていた方の事例\n「○○様と同じように、最初は不安だったけれど、やってみたら大丈夫だった、という方も珍しくありませんよ。」\n⑤ 審査についてのご安心ポイント\n「それに、審査は申し込みだけでしたら費用もかかりませんし、その場ですぐに結果がわかります。もし通らなかったとしても、別のお支払い方法でプランを組み直せますので、○○様が損をすることは一切ありません。どうぞご安心ください。」","B":"◇分割が嫌だ（初めてだから・ブラックだから）"}},{"r":11,"c":{"B":"【痛み赤みについて・脱毛前後のケア方法について】"}},{"r":12,"c":{"C":"① 医療とエステの一番の違い\n「医療とエステの一番の違いは、お肌への負担の違いです。」\n② 医療脱毛の痛みについて\n「医療脱毛は痛みが強いというイメージを、○○様もお持ちかと思いますが、実際に痛みが理由で断念される方もいらっしゃるほどです。輪ゴムを引っ張って当てられるところを、想像してみてください。」\n③ 痛みの強さ＝肌へのダメージ\n「また、痛みが強いということは、それだけ肌へのダメージも大きいということです。」\n④ ダウンタイムについて\n「ダウンタイムといって、数日間、施術部位が真っ赤に腫れあがってしまうこともありますので、その点を懸念される方も一定数いらっしゃいます。」","B":"◆医療とエステの痛みの違い"}},{"r":13,"c":{"D":"① 肌への不安に共感する\n「肌のこと、すごく大事ですよね。特に顔は毎日目に入る場所ですので、慎重になるのは当然だと思います。」\n② 具体的な不安を確認する\n「ちなみに、○○様が気にされているのは、赤みやヒリヒリなど、施術後の肌の反応のことですか？」\n（→具体的な不安を聞く）\n③ 初回の体験施術について\n「そうですよね。同じように心配される方が多いので、ストラッシュメンズでは初回のカウンセリングで、痛みの確認も含めて実際に施術を体験していただいているんです。先ほどお当てしたのがそれですね。」\n④ 現在の肌の状態を伝える\n「今拝見したところ、赤みなどもほとんど出ていませんので、今のところ大きな心配はなさそうです。」\n⑤ 途中解約について\n「それに、もし通ってみて合わないと感じられた場合は、途中で解約することもできます。その場合は、受けていただいた回数分の料金と所定の解約手数料を差し引いた金額をお返しする形になります。」\n⑥ 「始めながら様子を見る」というご提案\n「ですので、『様子を見てから決める』のではなく、**『始めながら様子を見る』**ことができるんです。」\n⑦ 分割での始めやすさ\n「しかも分割でしたら、最初の月のお支払いは【○円】くらいですので、肌の反応を見ながら、無理のない形でスタートしていただけますよ。」","B":"◇肌の様子を一度見てから考えたい"}},{"r":17,"c":{"B":"【脱毛期間と方法について】"}},{"r":18,"c":{"C":"① 毛周期の説明\n「毛って、ずっと同じ毛が生えているわけじゃなくて、生えて、抜けて、また生えてというサイクルを繰り返しているんです。これを毛周期といいます。\nその中で、脱毛の光が効果を発揮しやすいのは、毛がしっかり伸びている『成長期』の毛なんですね。この時期の毛は、毛を作る組織としっかりつながっているので、光の熱が届きやすいんです。」\n② 控え選手のたとえ\n「で、ここがポイントなんですが、今〇〇様の肌の表面に見えている毛って、実は全体の約【5～10％】ほどだけなんです。\nイメージでいうと、今試合に出ている選手が表面の毛で、その後ろにまだ出番を待っている『控え選手』がたくさんいる状態なんですね。」\n③ 回数が必要な理由\n「1回の施術でアプローチできるのは、今出ている選手、つまり表面の毛だけなんです。\nなので、1回当てて今の毛が減っても、しばらくすると控え選手が新しく生えてきます。その控え選手たちにも順番にアプローチしていく必要があるので、しっかり効果を実感していただくには【15回前後】通っていただくのが目安になります。」\n（→「1回で終わらないんだ」と納得してもらえたか反応を見る）\n④ 通うペースの大切さ\n「だからこそ大事なのが、通うペースなんです。\n間が空きすぎると、せっかくのタイミングを逃してしまって、効率が落ちてしまうんですね。\nストラッシュメンズでは【2週間前後】のペースで通っていただけるので、効率よく毛を減らしていくことができます。ご予約も取りやすいので、計画どおりに通っていただけますよ。」","B":"◆毛周期"}},{"r":19,"c":{"C":"① 毛には「濃い毛」と「細い毛」があることに気づいてもらう\n「ストラッシュメンズの脱毛方法についてなんですが、\nちょっと〇〇様の腕（またはヒゲ）を見ていただいてもいいですか？\n太くて黒い毛と、よく見ないとわからないくらいの細くて薄い毛、両方ありますよね。\n（→実際に指さして確認してもらう）\nヒゲも同じで、口周りやあごは太くて濃い毛、頬や首まわりは細い毛、というように、同じ人でも場所によって毛質が全然違うんです。」\n② 脱毛方式によって得意な毛が違う\n「実は脱毛の光にも、得意・不得意があるんです。\n一つはIPLという方式で、毛の黒い色に反応して熱を伝えるので、太くて濃い毛が得意です。その代わり、色の薄い細い毛には反応しにくいんですね。\nもう一つがSHRという方式で、毛の色ではなく、毛を作る部分にじんわり熱をためてアプローチするので、細い毛やうぶ毛が得意なんです。\nなので、どちらか一つだけだと、濃い毛は減ったけど細い毛が残る、または、その逆、ということが起きやすいんです。」\n③ ハイブリッドで両方同時にアプローチ\n「ストラッシュメンズでは、このIPLとSHRを1台で同時に照射できるハイブリッド脱毛機を使っています。\nなので、さっき見ていただいた濃い毛にも細い毛にも、1回の施術で両方アプローチできるんです。」\n④ ハイブリッドのメリット\n「このハイブリッド脱毛には、大きく3つのメリットがあります。\n1つ目は、施術時間が短いこと。照射のスピードが速いので、【全身でも最短60分ほど】で終わります。仕事帰りにも通いやすいんです。\n2つ目は、通う間隔を短くできること。SHRは毛の生え変わりの周期に左右されにくいので、【最短2週間】のペースで通っていただけます。そのぶん、効果を実感するまでの期間を短くしやすいんです。\n3つ目は、肌への負担や痛みが抑えやすいこと。肌を冷やしながら照射するので、痛みを感じにくいのも特徴です。先ほど体験していただいた感じも、【大丈夫そうでしたよね】。」\n（→「さらに、通う期間を短くできる分、効率よく進められるので、無駄な回数をかけずに済みやすいんです」と、料金面につなげる場合は④の最後に添える）","B":"◆ハイブリッド"}},{"r":20,"c":{"C":"① 事前ヒアリングの内容を振り返る\n「先ほど〇〇様、【ヒゲ剃りのあとにヒリヒリする／乾燥が気になる／カミソリ負けで赤くなる】とおっしゃっていましたよね。\n実はそれ、毎日のヒゲ剃りが原因になっていることが多いんです。カミソリって、毛と一緒に肌の表面も少しずつ削ってしまうので、毎日剃っていると肌がダメージを受けて、そういった悩みが出やすくなるんですね。」\n② 脱毛と同時にケアできることを伝える\n「ストラッシュメンズでは、その肌のケアも、脱毛と同時にできるようになっているんです。\n施術のときに使うジェルに、コラーゲンなどの美容成分が入っていて、それをエレクトロポレーションという方法で肌に浸透させていきます。\n普通にスキンケアを塗るだけだと、なかなか肌の奥まで入っていかないんですが、エレクトロポレーションは【微弱な電気の力で】美容成分を届けやすくする方法なんです。」\n③ 〇〇様の悩みにつなげる\n「なので、〇〇様の場合だと、\n・脱毛でヒゲ剃りの回数が減っていくので、【ヒリヒリ／乾燥／カミソリ負け】の原因そのものが減っていく\n・施術のたびに、肌のうるおいケアもできる\n・肌も潤えば脱毛効果も引きあがり効果のご実感もしやすくなる\nという、トリプルで〇〇様のお悩みにアプローチできるんです。\nしかも、施術の中で一緒にやっているので、別にケアに通う必要もないんですよ。」\n④ 将来のイメージにつなげる\n「〇〇様、先ほど【普段のスキンケアは化粧水くらい／特に何もしていない】とおっしゃっていましたよね。\n脱毛に通うついでに肌も整えていけるので、忙しくても無理なくケアを続けられます。ヒゲが減って、肌の調子も整ってくると、清潔感もかなり変わってきますよ。」","B":"◆EP（エレクトロポレーション）"}}]}],"built":"2026/11/01 09:26"}</script>
+<script id="app">
+document.body.appendChild(document.getElementById('shell').content.cloneNode(true));
+const RAW = JSON.parse(document.getElementById('data').textContent);
+const MARKS = ['①','②','③','④'];
+// テスト結果の送信先Googleフォーム（form_config.json から build.ps1 が埋め込む）
+const RESULT_FORM = null;
+
+// ---------- parse workbook ----------
+const sheets = RAW.sheets.map(s => ({ name: s.name, rows: (Array.isArray(s.rows) ? s.rows : [s.rows]).filter(Boolean) }));
+const ov = sheets[0];
+
+// 分類結果の列が無いときは、この値「以外」を懸念ありとして自動判定する
+const NO_CONCERN = ['正社員', '未婚（彼女なし）', 'なし'];
+// 概要の選択肢名とトークタブの【見出し】が違うときの対応表（選択肢 → 見出し）
+const ALIAS = { 'ある（4～9回）': 'ある（9回以下）', 'ある（4〜9回）': 'ある（9回以下）' };
+
+const headerRow = ov.rows.find(r => (r.c.F || '').trim() === '分類結果')
+  || ov.rows.filter(r => /^①/.test((r.c.B || '').trim()) && /^②/.test((r.c.C || '').trim())).pop();
+const HAS_RESULT = !!(headerRow && (headerRow.c.F || '').trim() === '分類結果');
+const AXES = ['B','C','D','E'].map((col, i) => {
+  const name = headerRow ? (headerRow.c[col] || '').trim() : '';
+  return name || sheets[i + 1]?.name || MARKS[i];
+});
+
+const patterns = ov.rows
+  .filter(r => headerRow && r.r > headerRow.r && /^\d+(\.0+)?$/.test(String(r.c.A || '').trim()) && (HAS_RESULT ? r.c.F : r.c.B))
+  .map(r => ({
+    no: parseInt(r.c.A, 10),
+    v: ['B','C','D','E'].map(k => (r.c[k] || '').trim()),
+    res: HAS_RESULT ? MARKS.map((m, i) => r.c.F.includes(m) ? i : -1).filter(i => i >= 0) : null
+  }));
+const isConcern = (axis, value) => !NO_CONCERN.includes(value);
+
+const OPTIONS = AXES.map((_, i) => {
+  const seen = [];
+  patterns.forEach(p => { if (p.v[i] && !seen.includes(p.v[i])) seen.push(p.v[i]); });
+  return seen;
+});
+
+// talk sheets: 【group】 / ◆ = 事前トーク, ◇ = アウト ; C = アウト潰し, D = 切り返し
+const TALK = sheets.slice(1, 5).map(s => {
+  const groups = [];
+  let g = null, last = null;
+  s.rows.forEach(r => {
+    const b = (r.c.B || '').trim(), c = r.c.C || '', d = r.c.D || '';
+    if (b.startsWith('◆トーク')) return;
+    if (b.startsWith('【')) {
+      g = { name: b.replace(/[【】]/g, '').trim(), items: [] }; groups.push(g); last = null;
+      if (c.trim() && !/トーク内容$/.test(c.trim())) { last = { kind:'pre', title:'事前トーク', pre:c, ret:d }; g.items.push(last); }
+      return;
+    }
+    if (!g) return;
+    if (/^[◆◇]/.test(b)) {
+      last = { kind: b[0] === '◆' ? 'pre' : 'out', title: b.slice(1).trim(), pre: c, ret: d };
+      g.items.push(last);
+    } else if (!b && last && (c || d)) {
+      if (c) last.pre = (last.pre ? last.pre + '\n' : '') + c;
+      if (d) last.ret = (last.ret ? last.ret + '\n' : '') + d;
+    }
+  });
+  return { sheet: s.name, groups };
+});
+
+const norm = s => (s || '').replace(/[【】（）()\s・]/g, '');
+function findGroup(axis, value) {
+  const t = TALK[axis]; if (!t) return null;
+  // 見出しと完全一致 → 旧見出し（ALIAS）→ 部分一致 の順で探す
+  const v = norm(value), a = norm(ALIAS[value] || '');
+  return t.groups.find(g => norm(g.name) === v)
+    || (a && t.groups.find(g => norm(g.name) === a))
+    || t.groups.find(g => { const n = norm(g.name); return n && (v.includes(n) || n.includes(v)); }) || null;
+}
+
+patterns.forEach(p => { if (!p.res) p.res = p.v.map((x, i) => isConcern(i, x) ? i : -1).filter(i => i >= 0); });
+
+// ---------- state ----------
+let sel = patterns[0] ? patterns[0].v.slice() : OPTIONS.map(o => o[0]);
+let filter = 'all';
+try { const h = decodeURIComponent(location.hash.slice(1)); const p = patterns.find(p => String(p.no) === h); if (p) sel = p.v.slice(); } catch (e) {}
+
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+
+// inline: **強調** / 【数字・キーワード】 / 〇〇様 / 問いかけ
+function inline(s) {
+  return esc(s)
+    .replace(/\*\*(.+?)\*\*/g, '<mark class="em">$1</mark>')
+    .replace(/【(.+?)】/g, '<span class="key">$1</span>')
+    .replace(/([〇○]{2}(様|さま|さん))/g, '<span class="you">$1</span>');
+}
+const ANALOGY = /((例えば|たとえば)(?!$)|イメージで|想像して)/;
+const ASK = /(？|\?|ですか|ませんか|どうですか)[」』]?$/;
+
+// split a talk into visual blocks: セリフ / 手順見出し / 反応確認 / 補足 / 箇条書き / 流れ
+function fmt(text) {
+  const lines = text.replace(/\r/g, '').split('\n');
+  const out = [];
+  let say = null, list = null, flow = null;
+  const close = () => {
+    // 1行＝1吹き出し（チャット風に区切って読みやすくする）
+    if (say) { say.lines.forEach((l, k) => out.push(`<div class="say${say.cls ? ' ' + say.cls : ''}${k ? ' cont' : ''}">${say.tag && !k ? `<span class="say-tag">${say.tag}</span>` : ''}${l}</div>`)); say = null; }
+    if (list) { out.push(`<ul class="pts">${list.map(x => `<li>${x}</li>`).join('')}</ul>`); list = null; }
+    if (flow) { out.push(`<ol class="flow">${flow.map(x => `<li class="${x.end ? 'end' : ''}">${x.h}</li>`).join('')}</ol>`); flow = null; }
+  };
+  const step = (n, h) => `<div class="step"><span class="step-n">${n}</span>${inline(h.trim())}</div>`;
+  const act = s => `<div class="act"><span class="act-tag">${/反応|確認|聞く|納得/.test(s) ? '反応確認' : '進め方'}</span>${inline(s.trim())}</div>`;
+  lines.forEach((raw, idx) => {
+    let t = raw.trim();
+    if (!t) { close(); return; }
+    let m;
+    // 「① 見出し「セリフ…」」→ 見出しとセリフに分ける
+    if ((m = t.match(/^([①-⑳])\s*([^「]{1,30})(「.+)$/))) { close(); out.push(step(m[1], m[2])); t = m[3]; }
+    // 行末の「→反応を見る」は別行の反応確認にする
+    let tail = null;
+    if ((m = t.match(/^(.*[^（(\s])\s*[（(]?→\s*(反応[^）)]*)[）)]?$/))) { t = m[1]; tail = m[2]; }
+    line(t, idx);
+    if (tail) { close(); out.push(act(tail)); }
+  });
+  close();
+  return out.join('');
+
+  function line(t, idx) {
+    let m;
+    if ((m = t.match(/^([①-⑳])\s*(.{1,30})$/)) && !/[。」]$/.test(t)) {
+      close(); out.push(step(m[1], m[2])); return;
+    }
+    if ((m = t.match(/^[（(]\s*→\s*(.*?)[）)]?$/))) { close(); out.push(act(m[1])); return; }
+    if (/^[（(].*[）)]$/.test(t)) { close(); out.push(`<div class="note">${inline(t.slice(1, -1))}</div>`); return; }
+    if (/^※/.test(t)) { close(); out.push(`<div class="note">${inline(t.replace(/^※\s*/, ''))}</div>`); return; }
+    if (/^[・•]/.test(t)) {
+      if (!list) { close(); list = []; }
+      list.push(inline(t.replace(/^[・•]\s*/, ''))); return;
+    }
+    if (/^(→|⇒)/.test(t)) {
+      if (!flow) { close(); flow = []; }
+      flow.push({ h: inline(t.replace(/^(→|⇒)\s*/, '')), end: t[0] === '⇒' }); return;
+    }
+    // short label line right before a bullet list → sub heading
+    const next = (lines.slice(idx + 1).find(l => l.trim()) || '').trim();
+    if (t.length <= 20 && !/[。！？!?」]$/.test(t) && /^[・•]/.test(next)) {
+      close(); out.push(`<div class="sub">${inline(t.replace(/^「/, ''))}</div>`); return;
+    }
+    // speech line（たとえ話は1行ずつ独立した吹き出しにする）
+    const isAnalogy = ANALOGY.test(t);
+    if (list || flow || (say && (isAnalogy || say.cls === 'analogy'))) close();
+    if (!say) say = isAnalogy ? { cls: 'analogy', tag: 'たとえ話', lines: [] } : { cls: '', tag: '', lines: [] };
+    const h = inline(t.replace(/^「/, '').replace(/」$/, ''));
+    say.lines.push(ASK.test(t) ? `<span class="ask">${h}</span>` : h);
+  }
+}
+
+// spoken length estimate (約300字/分)
+function readTime(text) {
+  const n = text.replace(/\s|\*|※/g, '').length;
+  const sec = Math.max(5, Math.round(n / 300 * 60 / 5) * 5);
+  return sec >= 60 ? `約${Math.floor(sec / 60)}分${sec % 60 ? sec % 60 + '秒' : ''}` : `約${sec}秒`;
+}
+
+// ---------- render: selectors ----------
+function renderSelectors() {
+  $('selectors').innerHTML = AXES.map((name, i) => `
+    <div class="axis k${i+1}">
+      <h3><span class="num">${MARKS[i].replace(/./, String(i+1))}</span>${esc(name.replace(/^[①②③④]/, ''))}</h3>
+      <div class="opts">${OPTIONS[i].map(o => {
+        const g = findGroup(i, o);
+        const n = g ? g.items.length : 0;
+        return `<button class="opt ${sel[i] === o ? 'on' : ''}" data-axis="${i}" data-val="${esc(o)}">${esc(o)}${g ? `<span class="tag">${n}件</span>` : `<span class="tag">${isConcern(i, o) ? 'トーク未登録' : '懸念なし'}</span>`}</button>`;
+      }).join('')}</div>
+    </div>`).join('');
+}
+$('selectors').addEventListener('click', e => {
+  const b = e.target.closest('.opt'); if (!b) return;
+  sel[+b.dataset.axis] = b.dataset.val; update();
+});
+
+$('filter').addEventListener('click', e => {
+  const b = e.target.closest('button'); if (!b) return;
+  filter = b.dataset.f;
+  [...$('filter').children].forEach(x => x.classList.toggle('on', x === b));
+  // アウト潰し＝C列のトークだけ／切り返し＝D列のトークだけ
+  document.body.classList.toggle('only-c', filter === 'pre');
+  document.body.classList.toggle('only-d', filter === 'ret');
+});
+
+// ---------- render: talks ----------
+function talkBlock(cls, label, when, text) {
+  const has = text && text.trim();
+  return `<div class="talk ${cls} ${has ? '' : 'empty'}">
+    <h4><span class="talk-ic">${cls === 'pre' ? '先' : '返'}</span>${label}<span class="when">${when}</span>${has ? `<span class="rt">${readTime(text)}</span>` : ''}</h4>
+    ${has ? `<button class="copy" data-raw="${esc(text.trim().replace(/\*\*/g, ''))}">コピー</button>` : ''}
+    <div class="txt">${has ? fmt(text.trim()) : '（トーク未記載）'}</div>
+  </div>`;
+}
+
+function renderTalks(p) {
+  $('pno').textContent = p ? p.no : '-';
+  const res = p ? p.res : [];
+  $('badges').innerHTML = res.length
+    ? res.map(i => `<span class="badge k${i+1}"><span class="num k${i+1}">${i+1}</span>${esc(AXES[i].replace(/^[①②③④]/, '').replace(/（.*?）/, ''))}</span>`).join('')
+    : '<span class="badge none">該当なし</span>';
+  if (p) history.replaceState(null, '', '#' + p.no);
+
+  // 同じアウト・事前トークが複数カテゴリに出る場合は最初の1つにまとめる（空の列は後のもので補う）
+  const seen = new Map();
+  const sections = res.map(i => {
+    const g = findGroup(i, sel[i]);
+    const items = [];
+    (g ? g.items : []).forEach((it, j) => {
+      const key = it.kind + ':' + norm(it.title);
+      const hit = seen.get(key);
+      if (hit) {
+        if (!(hit.pre || '').trim() && it.pre) hit.pre = it.pre;
+        if (!(hit.ret || '').trim() && it.ret) hit.ret = it.ret;
+        if (!hit.cats.includes(i)) hit.cats.push(i);
+        return;
+      }
+      const c = { ...it, id: `c${i}-${j}`, i, cats: [i] };
+      seen.set(key, c); items.push(c);
+    });
+    return { i, g, items };
+  });
+  const has = s => !!(s && s.trim());
+  const cls = it => (has(it.pre) ? '' : ' no-c') + (has(it.ret) ? '' : ' no-d');
+
+  let html = '';
+  if (!p) html = '<div class="emptybox">この組み合わせは概要タブの分類表に見つかりませんでした。</div>';
+  sections.forEach(({ i, g, items }) => {
+    const secCls = (items.some(it => has(it.pre)) ? '' : ' no-c') + (items.some(it => has(it.ret)) ? '' : ' no-d');
+    html += `<section class="cat k${i+1}${items.length ? secCls : ''}"><h2><span class="num">${i+1}</span>${esc(AXES[i].replace(/^[①②③④]/, ''))}：${esc(sel[i])}</h2>`;
+    if (!g || !g.items.length) {
+      html += `<div class="emptybox">「${esc(sel[i])}」向けのトークは「${esc(TALK[i]?.sheet || '')}」タブに未登録です。</div>`;
+    } else if (!items.length) {
+      html += '<div class="emptybox">このカテゴリのトークは上のカテゴリと共通です。</div>';
+    } else {
+      items.forEach(it => {
+        const missing = !has(it.pre) && !has(it.ret) ? '<span class="mis">（トーク未記載）</span>' : '';
+        const shared = it.cats.length > 1 ? `<span class="shared">${it.cats.map(k => '①②③④'[k]).join('')}共通</span>` : '';
+        if (it.kind === 'pre') {
+          const blocks = talkBlock('pre', '事前に伝えるトーク', '', it.pre) + (has(it.ret) ? talkBlock('ret', '切り返しトーク', '｜言われたら', it.ret) : '');
+          html += `<details class="card${cls(it)}" id="${it.id}" open><summary><span class="kind pre">事前トーク</span>${esc(it.title)}${shared}${missing}</summary>
+            <div class="body${has(it.ret) ? '' : ' single'}">${blocks}</div></details>`;
+        } else {
+          html += `<details class="card${cls(it)}" id="${it.id}" open><summary><span class="kind out">想定アウト</span>「${esc(it.title)}」${shared}${missing}</summary>
+            <div class="body">${talkBlock('pre', 'アウト潰しトーク', '｜言われる前に', it.pre)}${talkBlock('ret', '切り返しトーク', '｜言われたら', it.ret)}</div></details>`;
+        }
+      });
+    }
+    html += '</section>';
+  });
+  $('talks').innerHTML = html;
+  const all = sections.flatMap(s => s.items);
+  const chipRow = (kind, label) => {
+    const cs = all.filter(c => c.kind === kind);
+    const rowCls = (cs.some(c => has(c.pre)) ? '' : ' no-c') + (cs.some(c => has(c.ret)) ? '' : ' no-d');
+    return cs.length ? `<div class="chiprow${rowCls}"><div class="lbl">${label}（クリックでジャンプ）</div>` + cs.map(c =>
+      `<button class="chip ${kind}${cls(c)} ${!has(c.pre) && !has(c.ret) ? 'empty' : ''}" data-to="${c.id}"><span class="dot" style="background:var(--c${c.i+1})"></span>${esc(c.title)}</button>`).join('') + '</div>' : '';
+  };
+  $('outs').innerHTML = chipRow('pre', '事前トーク') + chipRow('out', '想定されるアウト');
+}
+$('outs').addEventListener('click', e => {
+  const b = e.target.closest('.chip'); if (!b) return;
+  const el = $(b.dataset.to); el.open = true;
+  el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  el.classList.add('flash'); setTimeout(() => el.classList.remove('flash'), 1200);
+});
+document.addEventListener('click', e => {
+  const b = e.target.closest('.copy'); if (!b) return;
+  const txt = b.dataset.raw;
+  const done = () => { const t = $('toast'); t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 1200); };
+  if (navigator.clipboard) navigator.clipboard.writeText(txt).then(done, () => fallbackCopy(txt, done)); else fallbackCopy(txt, done);
+});
+function fallbackCopy(txt, done) {
+  const ta = document.createElement('textarea'); ta.value = txt; document.body.appendChild(ta); ta.select();
+  try { document.execCommand('copy'); done(); } catch (e) {} ta.remove();
+}
+
+// ---------- list view ----------
+const lf = ['', '', '', ''];
+function renderList() {
+  $('listfilter').innerHTML = '絞り込み：' + AXES.map((a, i) =>
+    `<select data-i="${i}"><option value="">${esc(a)}：すべて</option>${OPTIONS[i].map(o => `<option ${lf[i] === o ? 'selected' : ''}>${esc(o)}</option>`).join('')}</select>`).join('');
+  const cur = currentPattern();
+  const rows = patterns.filter(p => lf.every((f, i) => !f || p.v[i] === f));
+  $('tbl').innerHTML = `<thead><tr><th>No.</th>${AXES.map(a => `<th>${esc(a)}</th>`).join('')}<th>分類結果</th></tr></thead><tbody>` +
+    rows.map(p => `<tr data-no="${p.no}" class="${cur && cur.no === p.no ? 'cur' : ''}"><td>${p.no}</td>${p.v.map(x => `<td>${esc(x)}</td>`).join('')}
+      <td>${p.res.map(i => `<span class="num k${i+1}" style="width:20px;height:20px;font-size:11px;margin-right:2px">${i+1}</span>`).join('')}</td></tr>`).join('') + '</tbody>';
+}
+$('listfilter').addEventListener('change', e => { lf[+e.target.dataset.i] = e.target.value; renderList(); });
+$('tbl').addEventListener('click', e => {
+  const tr = e.target.closest('tr[data-no]'); if (!tr) return;
+  const p = patterns.find(p => p.no === +tr.dataset.no); sel = p.v.slice();
+  switchView('nav'); update(); window.scrollTo(0, 0);
+});
+
+function switchView(v) {
+  document.querySelectorAll('header button[data-view]').forEach(b => b.classList.toggle('on', b.dataset.view === v));
+  $('view-nav').classList.toggle('hidden', v !== 'nav');
+  $('view-list').classList.toggle('hidden', v !== 'list');
+  $('view-quiz').classList.toggle('hidden', v !== 'quiz');
+  document.body.classList.toggle('in-quiz', v === 'quiz');
+  if (v === 'list') renderList();
+  if (v === 'quiz' && !quiz) renderQuizSetup();
+}
+document.querySelector('header').addEventListener('click', e => { const b = e.target.closest('button[data-view]'); if (b) switchView(b.dataset.view); });
+
+// ---------- テスト ----------
+// Excelのトークから4種類の問題を自動で作る
+// （トークの流れ＝順番を答える B・C 形式は出題しない）
+const QTYPES = [
+  { id: 'A', label: '予想アウト', desc: '属性 → 予想されるアウト' },
+  { id: 'D', label: '穴埋め', desc: '【】のキーワードを答える' },
+];
+// 過去の結果に残っている形式名も表示できるように
+const QLABEL = { A: '予想アウト', B: '切り返し', C: '事前トーク', D: '穴埋め' };
+const AXLABEL = AXES.map(a => a.replace(/^[①②③④]/, '').replace(/（.*?）/, ''));
+const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const plain = s => s.replace(/\*\*/g, '').replace(/[【】]/g, '').replace(/^「|」$/g, '').trim();
+const cut = (s, n) => s.length > n ? s.slice(0, n) + '…' : s;
+
+// トークの「① 見出し」を並べて流れにする（見出しが無ければ最初のセリフ）
+function flowOf(text) {
+  const lines = text.replace(/\r/g, '').split('\n').map(l => l.trim()).filter(Boolean);
+  const heads = lines.map(l => l.match(/^[①-⑳]\s*([^「]{1,30})/)).filter(Boolean).map(m => m[1].trim());
+  if (heads.length >= 2) return heads.slice(0, 4).join(' → ') + (heads.length > 4 ? ' …' : '');
+  const say = lines.find(l => !/^[①-⑳※（(・•→⇒]/.test(l) && l.length > 8) || lines[0] || '';
+  return cut(plain(say), 60);
+}
+
+function buildBank() {
+  const items = [];
+  TALK.forEach((t, ax) => t.groups.forEach(g => g.items.forEach(it => items.push({ ...it, ax, group: g.name }))));
+  const has = s => !!(s && s.trim());
+  const bank = [], seen = new Set();
+  // 不正解の選択肢は、正解とよく似たアウト名（「分割が嫌だ…」同士など）や形式の違うもの（流れ／1文）を外す
+  const alike = (a, b) => { const x = norm(a), y = norm(b); return x.slice(0, 5) === y.slice(0, 5) || x.includes(y) || y.includes(x); };
+  const push = q => {
+    const arrow = q.answer.includes('→');
+    q.wrong = q.wrong.filter(w => !alike(w, q.answer) && (q.type === 'B' || q.type === 'C' ? w.includes('→') === arrow : true));
+    const k = q.type + '|' + q.prompt + '|' + q.answer;
+    if (!seen.has(k) && q.wrong.length >= 3) { seen.add(k); bank.push(q); }
+  };
+
+  // A：属性 → 予想アウト
+  TALK.forEach((t, ax) => t.groups.forEach(g => {
+    const outs = g.items.filter(it => it.kind === 'out');
+    const mine = new Set(outs.map(it => norm(it.title)));
+    const others = [...new Set(items.filter(it => it.kind === 'out' && !mine.has(norm(it.title))).map(it => it.title))];
+    outs.forEach(it => push({ type: 'A', ax, title: it.title,
+      prompt: `お客様の${AXLABEL[ax]}が「${g.name}」。このとき予想されるアウトはどれ？`,
+      answer: it.title, wrong: others,
+      exp: `「${g.name}」で予想されるアウト：${outs.map(o => '「' + o.title + '」').join('、')}` }));
+  }));
+
+  // B：アウト → 切り返し（D列） / C：事前トーク（C列）
+  const flows = (col, pick) => items.filter(it => pick(it) && has(it[col])).map(it => ({ it, f: flowOf(it[col]) }));
+  const bF = flows('ret', it => it.kind === 'out');
+  bF.forEach(({ it, f }) => push({ type: 'B', ax: it.ax, title: it.title,
+    prompt: `「${it.title}」と言われたときの切り返しトーク。正しい流れはどれ？`,
+    answer: f, wrong: [...new Set(bF.filter(x => x.f !== f && norm(x.it.title) !== norm(it.title)).map(x => x.f))], talk: it.ret, cls: 'ret' }));
+  const cF = flows('pre', () => true);
+  cF.forEach(({ it, f }) => push({ type: 'C', ax: it.ax, title: it.title,
+    prompt: it.kind === 'out' ? `「${it.title}」と言われないように、事前に伝えるトークの流れはどれ？` : `事前トーク「${it.title}」の流れとして正しいのはどれ？`,
+    answer: f, wrong: [...new Set(cF.filter(x => x.f !== f && norm(x.it.title) !== norm(it.title)).map(x => x.f))], talk: it.pre, cls: 'pre' }));
+
+  // D：【】のキーワード穴埋め（〇〇などの記入欄は除く）
+  const keys = [];
+  items.forEach(it => ['pre', 'ret'].forEach(col => {
+    if (!has(it[col])) return;
+    it[col].split('\n').forEach(line => {
+      const l = line.trim();
+      [...l.matchAll(/【([^】]{1,20})】/g)].forEach(m => { if (!/[〇○]/.test(m[1])) keys.push({ it, col, line: l, key: m[1] }); });
+    });
+  }));
+  const allKeys = [...new Set(keys.map(k => k.key))];
+  keys.forEach(k => {
+    const num = /\d/.test(k.key);
+    const pool = allKeys.filter(x => x !== k.key && /\d/.test(x) === num);
+    push({ type: 'D', ax: k.it.ax, title: k.it.title,
+      prompt: `「${k.it.title}」のトークより。空欄に入る言葉はどれ？`,
+      line: k.line.replace('【' + k.key + '】', '\u0000'), answer: k.key,
+      wrong: pool.length >= 3 ? pool : allKeys.filter(x => x !== k.key), talk: k.it[k.col], cls: k.col });
+  });
+  return bank;
+}
+
+// claude.ai の外（GitHub Pages など）では、名前を入れてもらい結果をGoogleフォームへ送る
+const USE_FORM = !!(RESULT_FORM && RESULT_FORM.action) && !(window.claude && window.claude.use);
+let savedName = ''; try { savedName = localStorage.getItem('ca-quiz-name') || ''; } catch (e) {}
+let quiz = null, qset = { axes: [0, 1, 2, 3], types: QTYPES.map(t => t.id), n: 10, name: savedName }, BANK = null;
+const qBank = () => BANK || (BANK = buildBank().filter(q => QTYPES.some(t => t.id === q.type)));
+const qPool = () => qBank().filter(q => qset.axes.includes(q.ax) && qset.types.includes(q.type));
+
+function renderQuizSetup() {
+  quiz = null;
+  const pool = qPool();
+  const cnt = (k, v) => qBank().filter(q => q[k] === v && (k === 'ax' ? qset.types.includes(q.type) : qset.axes.includes(q.ax))).length;
+  $('quiz').innerHTML = `<div class="q-set">
+    <h2>トーク理解度テスト</h2>
+    <div class="q-row"><div class="lbl">出題する範囲</div>${AXLABEL.map((a, i) =>
+      `<button class="q-tog ${qset.axes.includes(i) ? 'on' : ''}" data-ax="${i}">${MARKS[i]}${esc(a)}<small>${cnt('ax', i)}問</small></button>`).join('')}</div>
+    <div class="q-row"><div class="lbl">問題の形式</div>${QTYPES.map(t =>
+      `<button class="q-tog ${qset.types.includes(t.id) ? 'on' : ''}" data-ty="${t.id}" title="${esc(t.desc)}">${esc(t.label)}<small>${cnt('type', t.id)}問</small></button>`).join('')}</div>
+    <div class="q-row"><div class="lbl">問題数</div>${[5, 10, 20].map(n =>
+      `<button class="q-tog ${qset.n === n ? 'on' : ''}" data-n="${n}">${n}問</button>`).join('')}</div>
+    ${USE_FORM ? `<div class="q-row"><div class="lbl">お名前（結果の記録に使います）</div>
+      <input class="q-name" id="qName" type="text" maxlength="30" placeholder="例：山田 太郎" value="${esc(qset.name)}" autocomplete="name"></div>` : ''}
+    <div class="q-row"><button class="q-go" id="qStart" ${pool.length && (!USE_FORM || qset.name.trim()) ? '' : 'disabled'}>テストを始める</button>
+      <span class="q-note" id="qStartNote">${!pool.length ? '範囲と形式を1つ以上選んでください' : USE_FORM && !qset.name.trim() ? 'お名前を入力すると始められます' : `対象 ${pool.length}問からランダムに出題します`}</span></div>
+    <div id="qHist"></div>
+  </div>`;
+  renderHistory();
+}
+
+function startQuiz(qs) {
+  quiz = { qs: qs.map(q => {
+    const opts = shuffle([q.answer, ...shuffle(q.wrong).slice(0, 3)]);
+    return { ...q, opts, ok: opts.indexOf(q.answer), pick: -1 };
+  }), idx: 0, saved: null };
+  renderQuestion();
+}
+
+function renderQuestion() {
+  const q = quiz.qs[quiz.idx], n = quiz.qs.length, done = q.pick >= 0;
+  const line = q.line ? `<div class="q-line">${inline(q.line).replace('\u0000', `<span class="q-blank">${done ? esc(q.answer) : '？'}</span>`)}</div>` : '';
+  const fb = !done ? '' : `<div class="q-fb ${q.pick === q.ok ? 'ok' : 'ng'}">${q.pick === q.ok ? '正解！' : '不正解… 正解は ' + (q.ok + 1) + '番'}</div>
+    ${q.exp ? `<div class="q-note" style="margin-top:8px">${esc(q.exp)}</div>` : ''}
+    ${q.talk ? `<details class="q-exp" ${q.pick === q.ok ? '' : 'open'}><summary>トーク全文を見る</summary>${talkBlock(q.cls, q.cls === 'pre' ? 'アウト潰し・事前トーク' : '切り返しトーク', '｜' + q.title, q.talk)}</details>` : ''}`;
+  $('quiz').innerHTML = `<div class="q-head"><span class="q-type">${MARKS[q.ax]} ${QTYPES.find(t => t.id === q.type).label}</span>
+      <span class="q-bar"><i style="width:${(quiz.idx + (done ? 1 : 0)) / n * 100}%"></i></span><span>${quiz.idx + 1} / ${n}</span></div>
+    <div class="q-prompt">${esc(q.prompt)}</div>${line}
+    <div class="q-opts">${q.opts.map((o, i) => `<button class="q-opt ${done && i === q.ok ? 'ok' : ''} ${done && i === q.pick && i !== q.ok ? 'ng' : ''}" data-i="${i}" ${done ? 'disabled' : ''}><span class="k">${i + 1}</span><span>${esc(o)}</span></button>`).join('')}</div>
+    ${fb}
+    <div class="q-actions"><button class="q-sub" id="qQuit">やめる</button>${done ? `<button class="q-go" id="qNext">${quiz.idx + 1 < n ? '次の問題へ' : '結果を見る'}</button>` : ''}</div>`;
+}
+
+function renderResult() {
+  const qs = quiz.qs, ok = qs.filter(q => q.pick === q.ok).length, wrong = qs.filter(q => q.pick !== q.ok);
+  if (!quiz.saved) {
+    const qz = quiz; qz.saved = 'saving';
+    saveAttempt(qs, ok).then(r => { qz.saved = r; if (quiz === qz && qz.idx === -1) renderResult(); });
+  }
+  quiz.idx = -1;
+  const st = quiz.saved === 'saving' ? '<span class="q-note">結果を保存しています…</span>'
+    : quiz.saved === 'ok' ? `<span class="q-note">${USE_FORM ? '結果を送信しました' : '結果を保存しました'}</span>`
+    : `<span class="q-note err">${esc(quiz.saved)}</span>`;
+  $('quiz').innerHTML = `<div class="q-res"><h2>テスト結果</h2>
+    <div class="q-score">${ok}<small> / ${qs.length}問正解（${Math.round(ok / qs.length * 100)}%）</small></div>
+    ${wrong.length ? `<div><div class="lbl">間違えた問題</div><ol class="q-wrong">${wrong.map(q => `<li><span class="q-type">${QTYPES.find(t => t.id === q.type).label}</span> ${esc(q.prompt)}<br><span class="q-note">正解：${esc(cut(q.answer, 70))}</span></li>`).join('')}</ol></div>` : '<div class="q-fb ok">全問正解です！</div>'}
+    ${st}
+    <div class="q-actions" style="justify-content:flex-start">${wrong.length ? '<button class="q-go" id="qRetry">間違えた問題をもう一度</button>' : ''}<button class="q-sub" id="qAgain">新しくテストする</button></div></div>`;
+}
+
+$('quiz').addEventListener('click', e => {
+  const b = e.target.closest('button'); if (!b) return;
+  if (b.dataset.ax != null || b.dataset.ty != null) {
+    const [k, v] = b.dataset.ax != null ? ['axes', +b.dataset.ax] : ['types', b.dataset.ty];
+    qset[k] = qset[k].includes(v) ? qset[k].filter(x => x !== v) : [...qset[k], v];
+    renderQuizSetup(); return;
+  }
+  if (b.dataset.n) { qset.n = +b.dataset.n; renderQuizSetup(); return; }
+  if (b.id === 'qStart') return startQuiz(shuffle(qPool()).slice(0, qset.n));
+  if (b.classList.contains('q-opt')) { quiz.qs[quiz.idx].pick = +b.dataset.i; renderQuestion(); return; }
+  if (b.id === 'qNext') { if (++quiz.idx < quiz.qs.length) renderQuestion(); else renderResult(); $('quiz').scrollIntoView({ block: 'start' }); return; }
+  if (b.id === 'qRetry') return startQuiz(shuffle(quiz.qs.filter(q => q.pick !== q.ok)));
+  if (b.id === 'qQuit' || b.id === 'qAgain') return renderQuizSetup();
+  if (b.id === 'qAdminOpen') return openAdmin();
+});
+$('quiz').addEventListener('input', e => {
+  if (e.target.id !== 'qName') return;
+  qset.name = e.target.value;
+  try { localStorage.setItem('ca-quiz-name', qset.name.trim()); } catch (err) {}
+  const ok = !!qset.name.trim(), pool = qPool().length;
+  $('qStart').disabled = !(ok && pool);
+  $('qStartNote').textContent = !pool ? '範囲と形式を1つ以上選んでください' : ok ? `対象 ${pool}問からランダムに出題します` : 'お名前を入力すると始められます';
+});
+
+// ---------- テスト結果の保存（Web版のみ） ----------
+// results/<自分のid> に自分の受験履歴をまとめて保存。全員分は編集権限のある人（古西さん）だけが読める
+let QDB = null, QUSER = null, QUID = null;
+const qReady = (async () => {
+  if (!window.claude || !window.claude.use) return;
+  [QDB, QUSER] = await Promise.all([window.claude.use('db'), window.claude.use('user')]);
+  if (QUSER) QUID = await QUSER.id();
+})();
+
+async function saveAttempt(qs, ok) {
+  await qReady;
+  const at = new Date();
+  const rec = { at: at.toISOString(), n: qs.length, ok,
+    axes: [...new Set(qs.map(q => q.ax))].sort(), types: [...new Set(qs.map(q => q.type))].sort(),
+    wrong: qs.filter(q => q.pick !== q.ok).map(q => ({ type: q.type, title: q.title })) };
+  if (USE_FORM) return sendToForm(rec);
+  if (!window.claude || !window.claude.use) return '結果の送信先が設定されていないため、結果は記録されません';
+  if (!QDB || !QUID) return 'この画面では結果は保存されません（claude.aiにサインインして開くと保存されます）';
+  try {
+    const ref = QDB.doc('results/' + QUID);
+    const snap = await ref.get();
+    const attempts = ((snap.exists && snap.data().attempts) || []).concat(rec).slice(-200);
+    await ref.set({ attempts, updated: rec.at });
+    return 'ok';
+  } catch (e) {
+    return e && e.code === 'invalid_argument' ? 'あなたの権限では結果を保存できません（閲覧のみの共有になっています）' : '結果を保存できませんでした。通信環境を確認してください。';
+  }
+}
+
+// Googleフォームの formResponse に送信（応答は読めないので、通信エラーだけ判定する）
+async function sendToForm(rec) {
+  const f = RESULT_FORM.fields || {}, body = new URLSearchParams();
+  const vals = {
+    name: qset.name.trim(), score: rec.ok, n: rec.n, rate: Math.round(rec.ok / rec.n * 100) + '%',
+    axes: rec.axes.map(i => AXLABEL[i]).join('・'), types: rec.types.map(t => QLABEL[t] || t).join('・'),
+    wrong: [...new Set(rec.wrong.map(w => w.title))].join('／'),
+  };
+  Object.keys(vals).forEach(k => { if (f[k]) body.append(f[k], vals[k]); });
+  try {
+    await fetch(RESULT_FORM.action, { method: 'POST', mode: 'no-cors', body });
+    return 'ok';
+  } catch (e) {
+    return '結果を送信できませんでした。通信環境を確認してください。';
+  }
+}
+
+const fmtDate = s => { const d = new Date(s), p = n => String(n).padStart(2, '0'); return `${d.getMonth() + 1}/${d.getDate()} ${p(d.getHours())}:${p(d.getMinutes())}`; };
+async function renderHistory() {
+  await qReady;
+  const box = $('qHist'); if (!box) return;
+  let html = '';
+  if (QDB && QUID) {
+    try {
+      const snap = await QDB.doc('results/' + QUID).get();
+      const at = ((snap.exists && snap.data().attempts) || []).slice(-5).reverse();
+      if (at.length) html += `<div class="lbl">あなたの最近の結果</div><ul class="q-hist">${at.map(a => `<li>${fmtDate(a.at)}　${a.ok} / ${a.n}問（${Math.round(a.ok / a.n * 100)}%）</li>`).join('')}</ul>`;
+    } catch (e) {}
+  }
+  if (QUSER && await QUSER.canEdit()) html += `<div class="q-row" style="margin-top:8px"><button class="q-sub" id="qAdminOpen">全員の結果を見る</button><span class="q-note">編集権限のある人だけに表示されます</span></div>`;
+  if ($('qHist') === box) box.innerHTML = html;
+}
+
+let ADMIN = [];
+async function openAdmin() {
+  const box = $('qadmin'); box.classList.remove('hidden');
+  box.innerHTML = '<div class="q-note">読み込み中…</div>';
+  try {
+    const snap = await QDB.collection('results').get();
+    const ids = snap.docs.map(d => d.id);
+    const ps = await QUSER.profiles(ids);
+    ADMIN = snap.docs.flatMap(d => (d.data().attempts || []).map(a => ({ ...a, name: ps[d.id].name || '（名前不明）' })))
+      .sort((a, b) => b.at.localeCompare(a.at));
+  } catch (e) { box.innerHTML = '<div class="q-note err">結果を読み込めませんでした。</div>'; return; }
+  const miss = {};
+  ADMIN.forEach(a => a.wrong.forEach(w => { miss[w.title] = (miss[w.title] || 0) + 1; }));
+  const weak = Object.entries(miss).sort((a, b) => b[1] - a[1]).slice(0, 10);
+  const people = new Set(ADMIN.map(a => a.name)).size;
+  box.innerHTML = `<div class="q-admin-head"><h2>全員のテスト結果</h2><span class="q-note">${people}人・${ADMIN.length}回</span>
+      <button class="q-go" id="qCopy" ${ADMIN.length ? '' : 'disabled'}>スプレッドシート用にコピー</button>
+      <button class="q-sub" id="qCsv" ${ADMIN.length ? '' : 'disabled'}>CSVでダウンロード</button><button class="q-sub" id="qReload">更新</button><button class="q-sub" id="qClose">閉じる</button></div>
+    ${weak.length ? `<div class="lbl">よく間違えられているトーク</div><div class="q-weak">${weak.map(([t, n]) => `<span class="chip">${esc(t)}　${n}回</span>`).join('')}</div>` : ''}
+    ${ADMIN.length ? `<div class="tblwrap"><table><thead><tr><th>日時</th><th>名前</th><th>点数</th><th>正答率</th><th>範囲</th><th>形式</th><th>間違えたトーク</th></tr></thead><tbody>${ADMIN.map(a => `<tr>
+      <td>${fmtDate(a.at)}</td><td>${esc(a.name)}</td><td>${a.ok} / ${a.n}</td><td>${Math.round(a.ok / a.n * 100)}%</td>
+      <td>${a.axes.map(i => MARKS[i]).join('')}</td><td>${a.types.map(t => QLABEL[t] || t).join('・')}</td>
+      <td class="w">${esc([...new Set(a.wrong.map(w => w.title))].join('／'))}</td></tr>`).join('')}</tbody></table></div>` : '<div class="emptybox">まだ結果がありません。</div>'}
+    <div class="q-note" id="qCsvMsg" style="margin-top:8px"></div>`;
+}
+
+function adminRows() {
+  const p = n => String(n).padStart(2, '0');
+  return [['日時', '名前', '問題数', '正解数', '正答率', '範囲', '形式', '間違えたトーク']].concat(ADMIN.map(a => {
+    const d = new Date(a.at);
+    return [`${d.getFullYear()}/${p(d.getMonth() + 1)}/${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}`, a.name, a.n, a.ok, Math.round(a.ok / a.n * 100) + '%',
+      a.axes.map(i => AXLABEL[i]).join('・'), a.types.map(t => QLABEL[t] || t).join('・'), [...new Set(a.wrong.map(w => w.title))].join('／')];
+  }));
+}
+
+$('qadmin').addEventListener('click', async e => {
+  const b = e.target.closest('button'); if (!b) return;
+  if (b.id === 'qClose') { $('qadmin').classList.add('hidden'); return; }
+  if (b.id === 'qReload') return openAdmin();
+  const msg = $('qCsvMsg');
+  // スプレッドシートのA1に貼り付けると、列ごとに分かれるタブ区切りでコピー
+  if (b.id === 'qCopy') {
+    const tsv = adminRows().map(r => r.map(c => String(c).replace(/[\t\r\n]+/g, ' ')).join('\t')).join('\n');
+    const done = () => { msg.textContent = `${ADMIN.length}件をコピーしました。スプレッドシートの「テスト結果」タブでA1セルを選んで貼り付けてください（前回の内容は上書きされます）。`; const t = $('toast'); t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 1200); };
+    if (navigator.clipboard) navigator.clipboard.writeText(tsv).then(done, () => fallbackCopy(tsv, done)); else fallbackCopy(tsv, done);
+    return;
+  }
+  if (b.id !== 'qCsv') return;
+  const q = s => '"' + String(s).replace(/"/g, '""') + '"';
+  const csv = '﻿' + adminRows().map(r => r.map(q).join(',')).join('\r\n');
+  try {
+    const dl = await window.claude.use('downloads');
+    if (!dl) { msg.textContent = 'この画面ではダウンロードできません。'; return; }
+    const d = new Date();
+    await dl.save({ filename: `テスト結果_${d.getFullYear()}${String(d.getMonth() + 1).padStart(2, '0')}${String(d.getDate()).padStart(2, '0')}.csv`, data: csv });
+    msg.textContent = 'ダウンロードしました。Excelやスプレッドシートで開けます。';
+  } catch (err) {
+    msg.textContent = err && err.code === 'declined' ? '' : 'ダウンロードできませんでした。';
+  }
+});
+
+// TOPへ戻る：少しスクロールしたら表示
+const toTop = $('totop');
+addEventListener('scroll', () => toTop.classList.toggle('show', scrollY > 400), { passive: true });
+toTop.addEventListener('click', () => scrollTo({ top: 0, behavior: 'smooth' }));
+
+function currentPattern() { return patterns.find(p => p.v.every((x, i) => x === sel[i])); }
+function update() { renderSelectors(); renderTalks(currentPattern()); }
+
+// ---------- Excelで更新（Web版のみ：編集権限のある人に表示） ----------
+let ARTIFACT = null, pending = null;
+(async () => {
+  if (!window.claude || !window.claude.use) return;
+  const art = await window.claude.use('artifact');
+  if (!art) return;
+  const u = await window.claude.use('user');
+  if (u && !(await u.canEdit())) return;
+  ARTIFACT = art;
+  $('updBtn').hidden = false;
+})();
+
+function openUpd() { pending = null; $('updSum').hidden = true; $('updGo').disabled = true; $('updModal').hidden = false; }
+function closeUpd() { $('updModal').hidden = true; }
+function showSum(html, err) { const s = $('updSum'); s.innerHTML = html; s.className = 'upd-sum' + (err ? ' err' : ''); s.hidden = false; }
+$('updBtn').addEventListener('click', openUpd);
+$('updCancel').addEventListener('click', closeUpd);
+$('updModal').addEventListener('click', e => { if (e.target === $('updModal')) closeUpd(); });
+$('updFile').addEventListener('change', e => { if (e.target.files[0]) readExcel(e.target.files[0]); e.target.value = ''; });
+const drop = $('updDrop');
+drop.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); $('updFile').click(); } });
+drop.addEventListener('dragover', e => { e.preventDefault(); drop.classList.add('over'); });
+drop.addEventListener('dragleave', () => drop.classList.remove('over'));
+drop.addEventListener('drop', e => { e.preventDefault(); drop.classList.remove('over'); if (e.dataTransfer.files[0]) readExcel(e.dataTransfer.files[0]); });
+
+function loadSheetJS() {
+  if (window.XLSX) return Promise.resolve();
+  return new Promise((res, rej) => {
+    const s = document.createElement('script');
+    s.src = 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
+    s.onload = res; s.onerror = () => rej(new Error('Excel読み込み機能を取得できませんでした。通信環境を確認してください。'));
+    document.head.appendChild(s);
+  });
+}
+
+// SheetJSのブックを build.ps1 と同じデータ形に変換する
+function workbookToRaw(wb, filename) {
+  const d = new Date(), p = n => String(n).padStart(2, '0');
+  return {
+    source: filename,
+    built: `${d.getFullYear()}/${p(d.getMonth() + 1)}/${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}`,
+    sheets: wb.SheetNames.map(name => {
+      const ws = wb.Sheets[name], rows = {};
+      Object.keys(ws).forEach(addr => {
+        const m = addr.match(/^([A-Z]+)(\d+)$/); if (!m) return;
+        const v = ws[addr].v; if (v == null || v === '') return;
+        const r = +m[2];
+        (rows[r] = rows[r] || { r, c: {} }).c[m[1]] = String(v);
+      });
+      return { name, rows: Object.values(rows).sort((a, b) => a.r - b.r) };
+    })
+  };
+}
+
+async function readExcel(file) {
+  pending = null; $('updGo').disabled = true;
+  if (!/\.xlsx$/i.test(file.name)) { showSum('.xlsx 形式のExcelファイルを選んでください。', true); return; }
+  showSum('読み込み中…');
+  try {
+    await loadSheetJS();
+    const wb = window.XLSX.read(await file.arrayBuffer(), { type: 'array' });
+    const raw = workbookToRaw(wb, file.name);
+    if (raw.sheets.length < 5) throw new Error(`シートが${raw.sheets.length}つしかありません。概要と①〜④の5つのタブが必要です。`);
+    const nPat = raw.sheets[0].rows.filter(r => /^\d+(\.0+)?$/.test(String(r.c.A || '').trim()) && r.c.B).length;
+    if (!nPat) throw new Error('概要タブにパターン（No.と属性の行）が見つかりません。');
+    const nOut = raw.sheets.slice(1, 5).reduce((n, s) => n + s.rows.filter(r => /^[◆◇]/.test((r.c.B || '').trim()) && !/^◆トーク/.test((r.c.B || '').trim())).length, 0);
+    pending = raw;
+    showSum(`<b>${esc(file.name)}</b><br>パターン数：${nPat}　／　トーク項目：${nOut}件<br>タブ：${raw.sheets.map(s => esc(s.name)).join('・')}`);
+    $('updGo').disabled = false;
+  } catch (e) {
+    showSum(esc(e.message || '読み込みに失敗しました。'), true);
+  }
+}
+
+// このページ全体を新しいデータで組み立て直す（ライブDOMではなく元のソースから）
+function buildDocument(raw) {
+  const t = s => '<' + s + '>';
+  const reset = ':root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font-family:system-ui,sans-serif;font-size:14px}img{max-width:100%}[hidden]{display:none!important}';
+  const json = JSON.stringify(raw).replace(/</g, '\\u003c');
+  return '<' + '!doctype html' + '>' + t('html') + t('head') + t('meta charset=utf8')
+    + t('meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"')
+    + t('style') + reset + t('/style') + t('/head') + t('body')
+    + t('title') + esc(document.title) + t('/title')
+    + t('meta name="claude:viewport-fit-sides" content="cover"')
+    + t('style id="appstyle"') + $('appstyle').textContent + t('/style')
+    + t('template id="shell"') + $('shell').innerHTML + t('/template')
+    + t('script id="data" type="application/json"') + json + t('/script')
+    + t('script id="app"') + $('app').textContent + t('/script')
+    + t('/body') + t('/html');
+}
+
+$('updGo').addEventListener('click', async () => {
+  if (!pending || !ARTIFACT) return;
+  $('updGo').disabled = true;
+  showSum('ページを更新しています…');
+  try {
+    await ARTIFACT.publish(buildDocument(pending));
+    showSum('更新しました。最新の内容で読み込み直します…');
+  } catch (e) {
+    const code = e && e.code;
+    if (code === 'conflict') showSum('ほかの人が先に更新しました。最新のページを読み込み直します。もう一度お試しください。', true);
+    else if (code === 'not_writer' || code === 'not_granted' || code === 'consent_required' || code === 'capability_disabled') { showSum('このページは閲覧専用のため更新できません。編集権限のある人に依頼してください。', true); $('updBtn').hidden = true; }
+    else if (code === 'too_large') showSum('データが大きすぎて更新できません。', true);
+    else if (code === 'rate_limited') showSum('短時間に更新が続いています。少し時間をおいてから試してください。', true);
+    else { showSum('更新できませんでした。時間をおいてもう一度お試しください。', true); $('updGo').disabled = false; }
+  }
+});
+
+$('listTab').textContent =`${patterns.length}パターン一覧`;
+$('meta').textContent =`元データ：${RAW.source}（${RAW.built} 更新）`;
+update();
+</script>
+</body>
+</html>
